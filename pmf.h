@@ -9,4 +9,12 @@ typedef struct ith_pmf_ {
   float *freqs;
 } ith_pmf_t;
 
+int load_alphabet(ith_pmf_t *, ith_alphabet_t *);
+
+int compute_counts(ith_pmf_t *);
+
+int compute_freqs(ith_pmf_t *);
+
+int compute_entropy(ith_pmf_t *);
+
 #endif /* _LIBITH_PMF_H */
