@@ -43,3 +43,15 @@ int ith_add_symbol(ith_alphabet_t *alph, ith_symbol_t *symb) {
   search->next = symb;
   return ++(alph->length);
 }
+
+int ith_remove_symbol(ith_alphabet_t *alph, ith_symbol_t *symb) {
+  if (alph->length == 0) {
+    return 0;
+  }
+  ith_symbol_t *search = alph->head;
+  while (search) {
+    
+
+  }
+
+}
