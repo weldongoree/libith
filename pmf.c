@@ -69,3 +69,10 @@ double compute_entropye(ith_pmf_t *p)
     }
   entropy = -entropy;
 }
+
+/* NB these next few make little sense for textual alphabets... */
+
+double pmf_mean(ith_pmf_t *p) 
+{
+  
+}

@@ -23,4 +23,10 @@ ith_symbol_t * ith_retrieve_nth(int, ith_alphabet_t *);
 
 int ith_symbol_equals(ith_symbol_t *, ith_symbol_t*);
 
+typedef struct ith_domainf_ {
+  float *values;
+  long *counts;
+  int length;
+}
+
 #endif /* _LIBITH_ALPHABET_H */

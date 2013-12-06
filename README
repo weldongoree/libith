@@ -1,0 +1,2 @@
+This is a library for computing entropy and other information-theory-related functions on data. Numeric arrays will be finished first because they are the easiest (and include character strings); arbitrary alphabets are in coming Real Soon Now.
+
