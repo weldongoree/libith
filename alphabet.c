@@ -1,7 +1,7 @@
 #include "alphabet.h"
 #include <string.h>
 
-int ith_symbol_equals(ith_symbol_t *a, ith_symbol_t *b) {
+int ith_symbol_equals(ith_symbol *a, ith_symbol *b) {
   if (a->size != b->size) {
     return 0;
   }
@@ -11,10 +11,10 @@ int ith_symbol_equals(ith_symbol_t *a, ith_symbol_t *b) {
   return 0;
 }
 
-int ith_contains_symbol(ith_alphabet_t *alph, ith_symbol_t *symb)
+int ith_contains_symbol(ith_alphabet *alph, ith_symbol *symb)
 {
   int idx=0;
-  ith_symbol_t *search = alph->head;
+  ith_symbol *search = alph->head;
   do
     {
       ++idx;
@@ -26,29 +26,43 @@ int ith_contains_symbol(ith_alphabet_t *alph, ith_symbol_t *symb)
   return 0;
 }
 
-int ith_add_symbol(ith_alphabet_t *alph, ith_symbol_t *symb) {
+int ith_add_symbol(ith_alphabet *alph, ith_symbol *symb) {
   if (alph->length == 0) {
     alph->head = symb;
     alph->length = 1;
     return 1;
   }
-  if (ith_contains_symbol(alph, symb)) {
-    /* no-op */
-    return 0;
-  }
-  ith_symbol_t *search = alph->head;
-  while (search->next) {
-    search = search->next;
-  }
-  search->next = symb;
-  return ++(alph->length);
+
+  ith_symbol *search = alph->head;
+  while (search)
+    {
+      if ith_symbol_equals(search, symb)
+			    {
+			      search->count += 1;
+			      alph->length++;
+			      return alph->length;
+			    }
+      else if (!search->next)
+	{
+	  search->next = symb;
+	  symb.count = 1;
+	  alph->length++;
+	  return alph->length;
+	}
+      else
+	{
+	  search = search->next;
+	}
+    }
+  /* should not reach here */
+  return -1;
 }
 
-int ith_remove_symbol(ith_alphabet_t *alph, ith_symbol_t *symb) {
+int ith_remove_symbol(ith_alphabet *alph, ith_symbol *symb) {
   if (alph->length == 0) {
     return 0;
   }
-  ith_symbol_t *search = alph->head;
+  ith_symbol *search = alph->head;
   while (search) {
     
 
