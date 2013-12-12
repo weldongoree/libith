@@ -19,7 +19,7 @@ int ith_contains_symbol(ith_alphabet *, ith_symbol *);
 
 int ith_add_symbol(ith_alphabet *, ith_symbol *);
 
-ith_symbol_t * ith_retrieve_nth(int, ith_alphabet *);
+ith_symbol * ith_retrieve_nth(int, ith_alphabet *);
 
 int ith_symbol_equals(ith_symbol *, ith_symbol *);
 
