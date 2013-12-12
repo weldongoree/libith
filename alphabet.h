@@ -42,5 +42,12 @@ unsigned long long ith_add_data(ith_alphabet *alph, void *data, size_t size);
 
 void load_data(ith_symbol *, void *, size_t);
 
+double entropy2(ith_alphabet *);
+
+double entropy10(ith_alphabet *);
+
+double entropye(ith_alphabet *);
+
+double entropy(ith_alphabet *, double base);
 
 #endif /* _LIBITH_ALPHABET_H */

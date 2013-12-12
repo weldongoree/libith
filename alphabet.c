@@ -100,7 +100,7 @@ ith_alphabet * new_alphabet()
   if (alph)
     {
       alph->calculated = 0;
-      alph->length = (long long) 0;
+      alph->length = 0ULL;
       alph->head = NULL;
     }
   return alph;
@@ -114,8 +114,8 @@ ith_symbol * new_symbol(char *data, size_t size)
       symb->data = calloc(size);
       memcpy(symb->data, data, size);
       symb->size = size;
-      symb->count = (long long) 0;
-      symb->freq = (double) 0.0;
+      symb->count = 0ULL;
+      symb->freq = 0.;
       symb->next = NULL;
     }
   return symb;
@@ -165,4 +165,92 @@ long long alphabet_sum(ith_alphabet *alph)
 	}
     }
   return res;
+}
+
+void calculate_frequencies(ith_alphabet *alph)
+{
+  if (alph && alph->head)
+    {
+      double sum = (double) alphabet_sum(alph);
+      ith_symbol search=alph->head;
+      while (search)
+	{
+	  search->freq = (double) search->count / sum;
+	}
+      alph->calculated=1;
+    }
+  return;
+}
+
+double entropy2(ith_alphabet *alph)
+{
+  double res=0.;
+  if (alph->calculated != 0)
+    {
+      if (alph && alph->head)
+	{
+	  ith_symbol search = alph->head;
+	  while (search)
+	    {
+	      res = res - (search->freq * log2(search->freq));
+	      search = search->next;
+	    }
+	}
+    }
+  return res;
+}
+
+double entropy10(ith_alphabet *alph)
+{
+  double res=0.;
+  if (alph->calculated != 0)
+    {
+      if (alph && alph->head)
+	{
+	  ith_symbol search = alph->head;
+	  while (search)
+	    {
+	      res = res - (search->freq * log10(search->freq));
+	      search = search->next;
+	    }
+	}
+    }
+  return res;
+}
+
+double entropye(ith_alphabet *alph)
+{
+  double res=0.;
+  if (alph->calculated != 0)
+    {
+      if (alph && alph->head)
+	{
+	  ith_symbol search = alph->head;
+	  while (search)
+	    {
+	      res = res - (search->freq * log(search->freq));
+	      search = search->next;
+	    }
+	}
+    }
+  return res;
+}
+
+double entropy(ith_alphabet *alph, double base)
+{
+  double res=0.;
+  if (alph->calculated != 0)
+    {
+      if (alph && alph->head)
+	{
+	  ith_symbol search = alph->head;
+	  while (search)
+	    {
+	      res = res - (search->freq * log(search->freq) / log(base));
+	      search = search->next;
+	    }
+	}
+    }
+  return res;
+
 }
