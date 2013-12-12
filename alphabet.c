@@ -5,67 +5,164 @@ int ith_symbol_equals(ith_symbol *a, ith_symbol *b) {
   if (a->size != b->size) {
     return 0;
   }
-  if (memcmp(a->data, b->data, a->size)) {
+  if (!memcmp(a->data, b->data, a->size)) {
     return (int) a->size;
   }
   return 0;
 }
 
-int ith_contains_symbol(ith_alphabet *alph, ith_symbol *symb)
+long long ith_contains_symbol(ith_alphabet *alph, ith_symbol *symb)
 {
-  int idx=0;
   ith_symbol *search = alph->head;
   do
     {
-      ++idx;
       if ith_symbol_equals(search, symb) {
-	  return idx;
+	  return search->count;
 	}
     }
   while (search->next);
   return 0;
 }
 
-int ith_add_symbol(ith_alphabet *alph, ith_symbol *symb) {
-  if (alph->length == 0) {
-    alph->head = symb;
-    alph->length = 1;
-    return 1;
+long long ith_add_data(ith_alphabet *alph, void *data, size_t size)
+{
+  ith_symbol *search = alph->head;
+  if (!search)
+    {
+      search = new
+      alph->head = search;
+      alph->length++;
+      
+    }
+  while (search) {
+    if (!memcmp(data, search->data, size))
+      {
+	search->count++;
+        return search->count;
+      }
   }
+}
 
+size_t get_data_size(ith_symbol *sym)
+{
+  return sym->size;
+}
+
+void * get_data(ith_symbol *sym)
+{
+      return sym->data;
+}
+
+void * load_data(ith_symbol *sym, void *data, size_t size)
+{
+  if (sym)
+    {
+      void *tmp = malloc(size);
+      if (tmp)
+	{
+	  memcpy(tmp, data, size);
+	  sym->data=tmp;
+	}
+    }
+}
+
+long long ith_add_symbol(ith_alphabet *alph, ith_symbol *symb) {
   ith_symbol *search = alph->head;
   while (search)
     {
       if ith_symbol_equals(search, symb)
 			    {
-			      search->count += 1;
+			      search->count++;
 			      alph->length++;
-			      return alph->length;
+			      return symb->count;
 			    }
-      else if (!search->next)
-	{
-	  search->next = symb;
-	  symb.count = 1;
-	  alph->length++;
-	  return alph->length;
-	}
       else
 	{
 	  search = search->next;
 	}
     }
-  /* should not reach here */
-  return -1;
+  if (alph->length == 0) {
+    alph->head = symb;
+    alph->length = 1;
+    return (long long) 1;
+  }
+
+
+  search->next = symb;
+  symb->count = (long long) 1;
+  alph->length++;
+  return symb->count;
 }
 
-int ith_remove_symbol(ith_alphabet *alph, ith_symbol *symb) {
-  if (alph->length == 0) {
-    return 0;
-  }
-  ith_symbol *search = alph->head;
-  while (search) {
-    
+ith_alphabet * new_alphabet() 
+{
+  ith_alphabet *alph = malloc(sizeof(ith_alphabet));
+  if (alph)
+    {
+      alph->calculated = 0;
+      alph->length = (long long) 0;
+      alph->head = NULL;
+    }
+  return alph;
+}
 
-  }
+ith_symbol * new_symbol(char *data, size_t size) 
+{
+  ith_symbol *symb = malloc(sizeof(ith_symbol));
+  if (symb)
+    {
+      symb->data = calloc(size);
+      memcpy(symb->data, data, size);
+      symb->size = size;
+      symb->count = (long long) 0;
+      symb->freq = (double) 0.0;
+      symb->next = NULL;
+    }
+  return symb;
+}
 
+void destroy_symbol(ith_symbol *symb)
+{
+  if (symb)
+    {
+      free(symb->data);
+    }
+  free(symb);
+  return;
+}
+
+void destroy_alphabet(ith_alphabet *alph)
+{
+  if (alph)
+    {
+      if (alph->head)
+	{
+	  ith_symbol *search;
+	  ith_symbol *hold;
+	  hold=alph->head;
+	  whild (hold)
+	  {
+	    search=alph->head->next;
+	    alph->head=search;
+	    destroy_symbol(hold);
+	    hold=search;
+	  }
+	}
+      free(alph);
+    }
+}
+
+long long alphabet_sum(ith_alphabet *alph)
+{
+  unsigned long long res = 0ULL;
+  if (alph && alph->head)
+    {
+      ith_symbol *search = alph.head;
+      while (search)
+	{
+	  res += search->count;
+	  search = search->next;
+	}
+    }
+  return res;
 }
