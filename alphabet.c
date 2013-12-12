@@ -1,6 +1,9 @@
 #include "alphabet.h"
+#include "bits.h"
+#include "entropy.h"
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
 
 
 int ith_symbol_equals(ith_symbol *a, ith_symbol *b) {
@@ -24,16 +27,34 @@ unsigned long long ith_add_data(ith_alphabet *alph, void *data, size_t size)
 	    search->count=1ULL;
 	    alph->head = search;
 	    alph->length++;
-	    return search->count;
 	  }
     }
-  while (search) {
-    if (!memcmp(data, search->data, size))
-      {
-	search->count++;
-        return search->count;
+  else 
+    {
+      while (search) {
+	if (!memcmp(data, search->data, size))
+	  {
+	    search->count++;
+	    return search->count;
+	  }
+	else
+	  {
+	    if (search->next)
+	      {
+		search = search->next;
+	      }
+	    else
+	      {
+		ith_symbol *tmp = new_symbol(data, size);
+		tmp->count = 1ULL;
+		search->next = tmp;
+		alph->length++;
+		return tmp->count;
+	      }
+	  }
       }
-  }
+    }
+  return 0ULL;
 }
 
 size_t get_data_size(ith_symbol *sym)
@@ -141,6 +162,7 @@ void calculate_frequencies(ith_alphabet *alph)
       while (search)
 	{
 	  search->freq = (double) search->count / sum;
+	  search = search->next;
 	}
       alph->calculated=1;
     }
@@ -219,3 +241,36 @@ double entropy(ith_alphabet *alph, double base)
   return res;
 
 }
+
+void print_ith_alphabet(ith_alphabet *pmf)
+{
+  int data;
+  int *dataptr;
+  int count;
+  if (!pmf)
+    {
+      printf("Trying to print void alphabet; bye\n");
+      return;
+    }
+  if (!(pmf->head))
+    {
+      printf("Trying to print alphabet with no nodes; bye\n");
+      return;
+    }
+  ith_symbol *search = pmf->head;
+
+  while (search)
+    {
+      dataptr = search->data;
+      data = (int) *dataptr;
+      count = (int) search->count;
+      printf("Node: %d\n", data);
+      printf("Count: %d\n", count);
+      printf("Freq: %f\n", search->freq);
+      printf("\n");
+      search = search->next;
+    }
+  printf("Total length: %d\n", (int) pmf->length);
+  printf("Sum: %d\n", (int) alphabet_sum(pmf));
+}
+

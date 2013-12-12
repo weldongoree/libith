@@ -13,4 +13,4 @@ $(BINTGT): $(BINOBJS)
 
 
 clean:
-	rm $(BINOBJS) $(BINTGT)
+	rm -f $(BINOBJS) $(BINTGT)

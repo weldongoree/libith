@@ -2,6 +2,7 @@
 #define __LIBITH_ALPHABET_H
 
 #include <stdlib.h>
+#include "entropy.h"
 
 typedef struct ith_symbol_ {
   void * data;
@@ -45,6 +46,8 @@ double entropy10(ith_alphabet *);
 
 double entropye(ith_alphabet *);
 
-double entropy(ith_alphabet *, double base);
+double entropy(ith_alphabet *, double);
+
+void print_ith_alphabet(ith_alphabet *);
 
 #endif /* __LIBITH_ALPHABET_H */
