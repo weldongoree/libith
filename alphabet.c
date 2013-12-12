@@ -1,5 +1,7 @@
 #include "alphabet.h"
 #include <string.h>
+#include <math.h>
+
 
 int ith_symbol_equals(ith_symbol *a, ith_symbol *b) {
   if (a->size != b->size) {
@@ -11,28 +13,19 @@ int ith_symbol_equals(ith_symbol *a, ith_symbol *b) {
   return 0;
 }
 
-long long ith_contains_symbol(ith_alphabet *alph, ith_symbol *symb)
-{
-  ith_symbol *search = alph->head;
-  do
-    {
-      if ith_symbol_equals(search, symb) {
-	  return search->count;
-	}
-    }
-  while (search->next);
-  return 0;
-}
-
-long long ith_add_data(ith_alphabet *alph, void *data, size_t size)
+unsigned long long ith_add_data(ith_alphabet *alph, void *data, size_t size)
 {
   ith_symbol *search = alph->head;
   if (!search)
     {
-      search = new
-      alph->head = search;
-      alph->length++;
-      
+      search = new_symbol(data, size);
+	if (search)
+	  {
+	    search->count=1ULL;
+	    alph->head = search;
+	    alph->length++;
+	    return search->count;
+	  }
     }
   while (search) {
     if (!memcmp(data, search->data, size))
@@ -53,7 +46,7 @@ void * get_data(ith_symbol *sym)
       return sym->data;
 }
 
-void * load_data(ith_symbol *sym, void *data, size_t size)
+void load_data(ith_symbol *sym, void *data, size_t size)
 {
   if (sym)
     {
@@ -64,34 +57,6 @@ void * load_data(ith_symbol *sym, void *data, size_t size)
 	  sym->data=tmp;
 	}
     }
-}
-
-long long ith_add_symbol(ith_alphabet *alph, ith_symbol *symb) {
-  ith_symbol *search = alph->head;
-  while (search)
-    {
-      if ith_symbol_equals(search, symb)
-			    {
-			      search->count++;
-			      alph->length++;
-			      return symb->count;
-			    }
-      else
-	{
-	  search = search->next;
-	}
-    }
-  if (alph->length == 0) {
-    alph->head = symb;
-    alph->length = 1;
-    return (long long) 1;
-  }
-
-
-  search->next = symb;
-  symb->count = (long long) 1;
-  alph->length++;
-  return symb->count;
 }
 
 ith_alphabet * new_alphabet() 
@@ -106,12 +71,12 @@ ith_alphabet * new_alphabet()
   return alph;
 }
 
-ith_symbol * new_symbol(char *data, size_t size) 
+ith_symbol * new_symbol(void *data, size_t size) 
 {
   ith_symbol *symb = malloc(sizeof(ith_symbol));
   if (symb)
     {
-      symb->data = calloc(size);
+      symb->data = malloc(size);
       memcpy(symb->data, data, size);
       symb->size = size;
       symb->count = 0ULL;
@@ -140,7 +105,7 @@ void destroy_alphabet(ith_alphabet *alph)
 	  ith_symbol *search;
 	  ith_symbol *hold;
 	  hold=alph->head;
-	  whild (hold)
+	  while (hold)
 	  {
 	    search=alph->head->next;
 	    alph->head=search;
@@ -152,12 +117,12 @@ void destroy_alphabet(ith_alphabet *alph)
     }
 }
 
-long long alphabet_sum(ith_alphabet *alph)
+unsigned long long alphabet_sum(ith_alphabet *alph)
 {
   unsigned long long res = 0ULL;
   if (alph && alph->head)
     {
-      ith_symbol *search = alph.head;
+      ith_symbol *search = alph->head;
       while (search)
 	{
 	  res += search->count;
@@ -172,7 +137,7 @@ void calculate_frequencies(ith_alphabet *alph)
   if (alph && alph->head)
     {
       double sum = (double) alphabet_sum(alph);
-      ith_symbol search=alph->head;
+      ith_symbol *search=alph->head;
       while (search)
 	{
 	  search->freq = (double) search->count / sum;
@@ -189,7 +154,7 @@ double entropy2(ith_alphabet *alph)
     {
       if (alph && alph->head)
 	{
-	  ith_symbol search = alph->head;
+	  ith_symbol *search = alph->head;
 	  while (search)
 	    {
 	      res = res - (search->freq * log2(search->freq));
@@ -207,7 +172,7 @@ double entropy10(ith_alphabet *alph)
     {
       if (alph && alph->head)
 	{
-	  ith_symbol search = alph->head;
+	  ith_symbol *search = alph->head;
 	  while (search)
 	    {
 	      res = res - (search->freq * log10(search->freq));
@@ -225,7 +190,7 @@ double entropye(ith_alphabet *alph)
     {
       if (alph && alph->head)
 	{
-	  ith_symbol search = alph->head;
+	  ith_symbol *search = alph->head;
 	  while (search)
 	    {
 	      res = res - (search->freq * log(search->freq));
@@ -243,7 +208,7 @@ double entropy(ith_alphabet *alph, double base)
     {
       if (alph && alph->head)
 	{
-	  ith_symbol search = alph->head;
+	  ith_symbol *search = alph->head;
 	  while (search)
 	    {
 	      res = res - (search->freq * log(search->freq) / log(base));

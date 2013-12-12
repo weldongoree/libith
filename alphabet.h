@@ -1,4 +1,4 @@
-#include <stddef.h>
+#include <stdlib.h>
 
 typedef struct ith_symbol_ {
   void * data;
@@ -13,10 +13,6 @@ typedef struct ith_alphabet_ {
   ith_symbol *head;
   int calculated;
 } ith_alphabet;
-
-unsigned long long ith_contains_symbol(ith_alphabet *, ith_symbol *);
-
-unsigned long long ith_add_symbol(ith_alphabet *, ith_symbol *);
 
 int ith_symbol_equals(ith_symbol *, ith_symbol *);
 
@@ -36,8 +32,6 @@ unsigned long long alphabet_sum(ith_alphabet *);
 
 void calculate_frequencies(ith_alphabet *);
 
-unsigned long long ith_contains_data(ith_alphabet *alph, void *data, size_t size);
-
 unsigned long long ith_add_data(ith_alphabet *alph, void *data, size_t size);
 
 void load_data(ith_symbol *, void *, size_t);
@@ -50,4 +44,3 @@ double entropye(ith_alphabet *);
 
 double entropy(ith_alphabet *, double base);
 
-#endif /* _LIBITH_ALPHABET_H */
