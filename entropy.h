@@ -12,7 +12,10 @@ typedef enum entropy_base_ {
 
 typedef enum entropy_alphabet_ {
   BITS,
-  BYTES
+  BYTES,
+  UINT16,
+  UINT32,
+  UINT64
 } entropy_alphabet;
 
 #endif

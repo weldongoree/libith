@@ -1,8 +1,8 @@
 CC=gcc
 LIBS=-lm
-BINOBJS=entropy.o alphabet.o
+BINOBJS=entropy.o alphabet.o bits.o
 BINTGT=entropy
-DEPS=alphabet.h entropy.h
+DEPS=alphabet.h entropy.h bits.h
 CFLAGS=-g -Wall
 
 %.o: %.c $(DEPS)

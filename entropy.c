@@ -1,30 +1,114 @@
 #include "entropy.h"
 #include "string.h"
+#include "bits.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "entropy.h"
-/* entropy -u units -a alphabet -w -f FILE -p 
- */
 
 void usage()
 {
   printf("Entropy: compute the entropy of a file\n");
-  printf("entropy -h | [-a bytes] [-u binary | natural | decimal] [-p]\n");
-  printf("Options: -a bytes (currently the only alphabet)\n");
+  printf("entropy -h | [-a byte bit uint16_t uint32_t uint64_t] [-u binary | natural | decimal] [-p]\n");
+  printf("Options: -a bytes etc. (the alphabet you're reading over)\n");
   printf("\t-u binary | natural | decimal (compute in bits, nats, or digits)\n");
-  printf("-p print results (you probably want to do this)\n");
+  printf("-p print summary of the probability distribution from the sample\n");
   printf("-h print this usage message\n");
   return;
 }
 
-int main(int argc, char **argv) 
+ith_alphabet *load_from_file(int fflag, char *fval, int aflag, char *aval)
 {
   FILE *fp;
+  entropy_alphabet alphabet=BYTES;
+
+  ith_alphabet *alph;
+  if (aflag)
+    {
+      if (!strcmp(aval, "bits"))
+	{
+	  alphabet=BITS;
+	}
+      else if (!strcmp(aval, "uint16"))
+	{
+	  alphabet=UINT16;
+	}
+    }
+
+  if (!fflag)
+    {
+      fp = stdin;
+    }
+  else
+    {
+      fp = fopen(fval, "r");
+    }
+  if (!fp)
+    {
+      printf("Error opening file %s\n", fval);
+      return NULL;
+    }
+  alph = new_alphabet();
+  if (!alph)
+    {
+      printf("Cannot make new alphabet\n");
+      return NULL;
+    }
+  
+  char holder;
+  uint16_t holder16;
+  char holder1, holder2;
+  bytebits bbholder;
+  int i;
+  switch (alphabet)
+    {
+    case BYTES:
+      while ((holder = fgetc(fp)) != EOF)
+	{
+	  ith_add_data(alph, &holder, sizeof(char));
+	}
+      break;
+    case BITS:
+      while ((holder = fgetc(fp)) != EOF)
+	{
+	  bbholder = explode_byte((uint8_t) holder);
+	  for (i = 0; i < 8; i++)
+	    {
+	      ith_add_data(alph, &(bbholder.bits[i]), sizeof(uint8_t));
+	    }
+	}
+      break;
+    case UINT16:
+      while ( ((holder1 = fgetc(fp)) != EOF) && ((holder2 = fgetc(fp)) != EOF))
+	{
+	  holder16 = holder1;
+	  holder16 = holder16 << 8;
+	  holder16 += holder2;
+	  ith_add_data(alph, &holder16, sizeof(uint16_t));
+	}
+      break;
+    default:
+      printf("Not really doing anything...\n");
+      if (fflag)
+	{
+	  fclose(fp);
+	}
+      return NULL;
+    }
+
+  if (fflag)
+    {
+      fclose(fp);
+    }
+
+
+  return alph;
+}
+
+int main(int argc, char **argv) 
+{
   int uflag = 0;
   int aflag = 0;
-  int dflag = 0;
   int fflag = 0;
   int pflag = 0;
   int hflag = 0;
@@ -39,16 +123,13 @@ int main(int argc, char **argv)
   ith_alphabet *alph;
   double ent;
 
-  while ((c = getopt (argc, argv, "a:df:hpu:")) != -1)
+  while ((c = getopt (argc, argv, "a:f:hpu:")) != -1)
     {
       switch (c)
 	{
 	case 'a':
 	  aflag=1;
 	  aval=optarg;
-	  break;
-	case 'd':
-	  dflag=1;
 	  break;
 	case 'f':
 	  fflag=1;
@@ -82,14 +163,23 @@ int main(int argc, char **argv)
     usage();
     return(0);
   }
+
+  alph = load_from_file(fflag, fval, aflag, aval);
   
+  calculate_frequencies(alph);
+
   if (aflag)
     {
       if (!strcmp(aval, "bits"))
 	{
 	  alphabet=BITS;
 	}
+      else if (!strcmp(aval, "uint16"))
+	{
+	  alphabet=UINT16;
+	}
     }
+
   if (uflag)
     {
       if (!strcmp(uval, "e"))
@@ -102,71 +192,19 @@ int main(int argc, char **argv)
 	}
     }
   
-  if (dflag)
-    {
-      printf("Debugging option information:\n");
-      printf("Aflag is %d\n", aflag);
-      if (aflag)
-	printf("Aval is %s\n", aval);
-      printf("Uflag is %d\n", uflag);
-      printf("Dflag is %d\n", dflag);
-      if (uflag)
-	printf("Uval is %s\n", uval);
-      printf("Fflag is %d\n", fflag);
-      if (fflag)
-	printf("Fval is %s\n", fval);
-      else
-	printf("Entropy will read from stdin\n");
-      if (base==DECIMAL)
-	printf("Entropy will be computed in decimal digits\n");
-      if (base==BINARY)
-	printf("Entropy will be computed in bits\n");
-      if (base==NATURAL)
-	printf("Entropy will be computed in nats\n");
-      if (alphabet==BITS)
-	printf("Entropy will be calculated on bits\n");
-      if (alphabet==BYTES)
-	printf("Entropy will be calculated on bytes\n");
-    }
 
-  if (!fflag)
-    {
-      fp = stdin;
-    }
-  else
-    {
-      fp = fopen(fval, "r");
-    }
-  if (!fp)
-    {
-      printf("Error opening file %s\n", fval);
-      return 1;
-    }
-  alph = new_alphabet();
-  if (!alph)
-    {
-      printf("Cannot make new alphabet\n");
-      return 1;
-    }
-
-  char holder;
 
   switch (alphabet)
     {
     case BYTES:
       onval = "byte";
-      while ((holder = fgetc(fp)) != EOF)
-	{
-	  ith_add_data(alph, &holder, sizeof(char));
-	}
+      break;
+    case UINT16:
+      onval = "16-bit short";
       break;
     default:
       onval = "bit";
-      printf("Not really doing anything...\n");
-      
     }
-
-  calculate_frequencies(alph);
 
   switch (base)
     {
@@ -183,15 +221,14 @@ int main(int argc, char **argv)
       ent = entropy2(alph);
     }
 
+      printf("Entropy is %f %s per %s\n", ent, inval, onval);
+
+
   if (pflag)
     {
-      printf("Entropy is %f %s per %s\n", ent, inval, onval);
+      print_ith_alphabet(alph);
     }
 
-  if (fflag)
-    {
-      fclose(fp);
-    }
   destroy_alphabet(alph);
   return 0;
 
