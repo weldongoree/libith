@@ -1,2 +1,12 @@
-This is a library for computing entropy and other information-theory-related functions on data. Numeric arrays will be finished first because they are the easiest (and include character strings); arbitrary alphabets are in coming Real Soon Now.
+This is a library for computing entropy and other information-theory-related functions on data. Currently it will find the entropy of a file or stdin in bits, nats, or digits over the file's bytes. More options on their way; still far from an actual release.
 
+Also, this is absurdly non-optimized as of now; I'm working on making sure it's correct at the expense of higher memory usage and slower i/o.
+
+make entropy will produce a binary called "entropy". Its options are
+
+-a bytes (other alphabets will eventually be supported)
+-u binary | decimal | natural (compute in bits, digits, and nats respectively)
+-f file (default reads from stdin)
+-p print the results (you probably want to do this; -p is going to become the "pretty-print" option eventually)
+
+entropy is one driver for what I hope will end up being a more general shared library.

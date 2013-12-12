@@ -8,6 +8,17 @@
 /* entropy -u units -a alphabet -w -f FILE -p 
  */
 
+void usage()
+{
+  printf("Entropy: compute the entropy of a file\n");
+  printf("entropy -h | [-a bytes] [-u binary | natural | decimal] [-p]\n");
+  printf("Options: -a bytes (currently the only alphabet)\n");
+  printf("\t-u binary | natural | decimal (compute in bits, nats, or digits)\n");
+  printf("-p print results (you probably want to do this)\n");
+  printf("-h print this usage message\n");
+  return;
+}
+
 int main(int argc, char **argv) 
 {
   FILE *fp;
@@ -16,7 +27,7 @@ int main(int argc, char **argv)
   int dflag = 0;
   int fflag = 0;
   int pflag = 0;
-  int tflag = 1;
+  int hflag = 0;
   char *uval=NULL;
   char *aval=NULL;
   char *fval=NULL;
@@ -28,7 +39,7 @@ int main(int argc, char **argv)
   ith_alphabet *alph;
   double ent;
 
-  while ((c = getopt (argc, argv, "a:df:pu:t")) != -1)
+  while ((c = getopt (argc, argv, "a:df:hpu:")) != -1)
     {
       switch (c)
 	{
@@ -43,11 +54,11 @@ int main(int argc, char **argv)
 	  fflag=1;
 	  fval=optarg;
 	  break;
+	case 'h':
+	  hflag=1;
+	  break;
 	case 'p':
 	  pflag=1;
-	  break;
-	case 't':
-	  tflag=1;
 	  break;
 	case 'u':
 	  uflag=1;
@@ -67,6 +78,10 @@ int main(int argc, char **argv)
 	  abort(); 
 	}
     }
+  if (hflag) {
+    usage();
+    return(0);
+  }
   
   if (aflag)
     {
