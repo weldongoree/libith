@@ -1,8 +1,8 @@
 CC=gcc
 LIBS=-lm
-BINOBJS=entropy.o alphabet.o bits.o
+BINOBJS=entropy.o alphabet.o bits.o load.o
 BINTGT=entropy
-DEPS=alphabet.h entropy.h bits.h
+DEPS=alphabet.h entropy.h bits.h load.h
 CFLAGS=-g -Wall
 
 %.o: %.c $(DEPS)
@@ -10,7 +10,6 @@ CFLAGS=-g -Wall
 
 $(BINTGT): $(BINOBJS)
 	$(CC) $(CFLAGS) ${LIBS} -o entropy $(BINOBJS)
-
 
 clean:
 	rm -f $(BINOBJS) $(BINTGT)

@@ -2,7 +2,6 @@
 #define __LIBITH_ALPHABET_H
 
 #include <stdlib.h>
-#include "entropy.h"
 
 typedef struct ith_symbol_ {
   void * data;
