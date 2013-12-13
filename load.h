@@ -4,7 +4,7 @@
 #include <wchar.h>
 
 #include "bits.h"
-#include "alphabet.h"
+#include "pmf.h"
 
 typedef enum entropy_base_ {
   BINARY,

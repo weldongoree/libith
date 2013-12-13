@@ -1,10 +1,12 @@
 #include "load.h"
 
-ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt)
+rep
+
+ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
 {
   FILE *fp;
 
-  ith_alphabet *alph;
+  ith_pmf *alph;
 
   if (!fflag)
     {
@@ -19,10 +21,10 @@ ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt)
       printf("Error opening file %s\n", fval);
       return NULL;
     }
-  alph = new_alphabet();
+  alph = new_pmf();
   if (!alph)
     {
-      printf("Cannot make new alphabet\n");
+      printf("Cannot make new pmf\n");
       return NULL;
     }
   
@@ -33,9 +35,7 @@ ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt)
   char holderarr[8];
   bytebits bbholder;
   int i;
-  char *buff;
-  long file_length;
-  size_t bytes_read;
+
   wchar_t wholder;
 
   switch (cxt.alphabet)
@@ -59,14 +59,14 @@ ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt)
     case UINT16:
       while ( ((holderarr[0] = fgetc(fp)) != EOF) && ((holderarr[1] = fgetc(fp)) != EOF))
 	{
-	  holder16 = (holderarr[0] << 8) + holderarr[1];
+	  holder16 = (((uint16_t)holderarr[0]) << 8) + holderarr[1];
 	  ith_add_data(alph, &holder16, sizeof(uint16_t));
 	}
       break;
     case UINT32:
       while ( ((holderarr[0] = fgetc(fp)) != EOF) && ((holderarr[1] = fgetc(fp)) != EOF) && ((holderarr[2] = fgetc(fp)) != EOF) && ((holderarr[3] = fgetc(fp)) != EOF))
 	{
-	  holder32 = (holderarr[0] << 24) + (holderarr[1] << 16) + (holderarr[2] << 8) + holderarr[3];
+	  holder32 = (((uint32_t)holderarr[0]) << 24) + (((uint32_t)holderarr[1]) << 16) + (((uint32_t)holderarr[2]) << 8) + holderarr[3];
 	  ith_add_data(alph, &holder32, sizeof(uint32_t));
 	}
 	break;
@@ -75,7 +75,7 @@ ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt)
 	{
 	/* TODO: this is wrong; holderarr[0] can't be shifted that much */
 
-	  holder64 = (holderarr[0] << 56) + (holderarr[1] << 48) + (holderarr[2] << 40) + (holderarr[3] << 32) + (holderarr[4] << 24) + (holderarr[5] << 16) + (holderarr[6] << 8) +holderarr[7];
+	  holder64 = (((uint64_t)holderarr[0]) << 56) + (((uint64_t)holderarr[1]) << 48) + (((uint64_t)holderarr[2]) << 40) + (((uint64_t)holderarr[3]) << 32) + (((uint64_t)holderarr[4]) << 24) + (((uint64_t)holderarr[5]) << 16) + (((uint64_t)holderarr[6]) << 8) +holderarr[7];
 	  ith_add_data(alph, &holder64, sizeof(uint64_t));	
 	}
       break;

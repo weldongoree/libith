@@ -1,4 +1,4 @@
-#include "alphabet.h"
+#include "pmf.h"
 #include "entropy.h"
 #include "bits.h"
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   char *inval=NULL;
   char *onval=NULL;
   int c;
-  ith_alphabet *alph;
+  ith_pmf *alph;
   double ent;
   entropy_context cxt;
 
@@ -172,10 +172,10 @@ int main(int argc, char **argv)
 
   if (pflag)
     {
-      print_ith_alphabet(alph);
+      print_ith_pmf(alph);
     }
 
-  destroy_alphabet(alph);
+  destroy_pmf(alph);
   return 0;
 
 }
