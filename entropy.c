@@ -17,23 +17,11 @@ void usage()
   return;
 }
 
-ith_alphabet *load_from_file(int fflag, char *fval, int aflag, char *aval)
+ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt)
 {
   FILE *fp;
-  entropy_alphabet alphabet=BYTES;
 
   ith_alphabet *alph;
-  if (aflag)
-    {
-      if (!strcmp(aval, "bits"))
-	{
-	  alphabet=BITS;
-	}
-      else if (!strcmp(aval, "uint16"))
-	{
-	  alphabet=UINT16;
-	}
-    }
 
   if (!fflag)
     {
@@ -57,10 +45,12 @@ ith_alphabet *load_from_file(int fflag, char *fval, int aflag, char *aval)
   
   char holder;
   uint16_t holder16;
-  char holder1, holder2;
+  uint32_t holder32;
+  uint64_t holder64;
+  char holderarr[8];
   bytebits bbholder;
   int i;
-  switch (alphabet)
+  switch (cxt.alphabet)
     {
     case BYTES:
       while ((holder = fgetc(fp)) != EOF)
@@ -79,12 +69,24 @@ ith_alphabet *load_from_file(int fflag, char *fval, int aflag, char *aval)
 	}
       break;
     case UINT16:
-      while ( ((holder1 = fgetc(fp)) != EOF) && ((holder2 = fgetc(fp)) != EOF))
+      while ( ((holderarr[0] = fgetc(fp)) != EOF) && ((holderarr[1] = fgetc(fp)) != EOF))
 	{
-	  holder16 = holder1;
-	  holder16 = holder16 << 8;
-	  holder16 += holder2;
+	  holder16 = (holderarr[0] << 8) + holderarr[1];
 	  ith_add_data(alph, &holder16, sizeof(uint16_t));
+	}
+      break;
+    case UINT32:
+      while ( ((holderarr[0] = fgetc(fp)) != EOF) && ((holderarr[1] = fgetc(fp)) != EOF) && ((holderarr[2] = fgetc(fp)) != EOF) && ((holderarr[3] = fgetc(fp)) != EOF))
+	{
+	  holder32 = (holderarr[0] << 24) + (holderarr[1] << 16) + (holderarr[2] << 8) + holderarr[3];
+	  ith_add_data(alph, &holder32, sizeof(uint32_t));
+	}
+	break;
+    case UINT64:
+      while ( ((holderarr[0] = fgetc(fp)) != EOF) && ((holderarr[1] = fgetc(fp)) != EOF) && ((holderarr[2] = fgetc(fp)) != EOF) && ((holderarr[3] = fgetc(fp)) != EOF) && ((holderarr[4] = fgetc(fp)) != EOF) && ((holderarr[5] = fgetc(fp)) != EOF) && ((holderarr[6] = fgetc(fp)) != EOF) && ((holderarr[7] = fgetc(fp)) != EOF))
+	{
+	  holder64 = (holderarr[0] << 56) + (holderarr[1] << 48) + (holderarr[2] << 40) + (holderarr[3] << 32) + (holderarr[4] << 24) + (holderarr[5] << 16) + (holderarr[6] << 8) +holderarr[7];
+	  ith_add_data(alph, &holder64, sizeof(uint64_t));	
 	}
       break;
     default:
@@ -118,10 +120,12 @@ int main(int argc, char **argv)
   char *inval=NULL;
   char *onval=NULL;
   int c;
-  entropy_base base = BINARY;
-  entropy_alphabet alphabet = BYTES;
   ith_alphabet *alph;
   double ent;
+  entropy_context cxt;
+
+  cxt.alphabet = BYTES;
+  cxt.base = BINARY;
 
   while ((c = getopt (argc, argv, "a:f:hpu:")) != -1)
     {
@@ -164,19 +168,23 @@ int main(int argc, char **argv)
     return(0);
   }
 
-  alph = load_from_file(fflag, fval, aflag, aval);
-  
-  calculate_frequencies(alph);
-
   if (aflag)
     {
-      if (!strcmp(aval, "bits"))
+      if (!strcmp(aval, "2"))
 	{
-	  alphabet=BITS;
+	  cxt.alphabet=BITS;
 	}
-      else if (!strcmp(aval, "uint16"))
+      else if (!strcmp(aval, "16"))
 	{
-	  alphabet=UINT16;
+	  cxt.alphabet=UINT16;
+	}
+      else if (!strcmp(aval, "32"))
+	{
+	  cxt.alphabet=UINT32;
+	}
+      else if (!strcmp(aval, "64"))
+	{
+	  cxt.alphabet=UINT64;
 	}
     }
 
@@ -184,17 +192,19 @@ int main(int argc, char **argv)
     {
       if (!strcmp(uval, "e"))
 	{
-	  base=NATURAL;
+	  cxt.base=NATURAL;
 	}
       if (!strcmp(uval, "10"))
 	{
-	  base=DECIMAL;
+	  cxt.base=DECIMAL;
 	}
     }
+
+  alph = load_from_file(fflag, fval, cxt);
   
+  calculate_frequencies(alph);
 
-
-  switch (alphabet)
+  switch (cxt.alphabet)
     {
     case BYTES:
       onval = "byte";
@@ -202,11 +212,17 @@ int main(int argc, char **argv)
     case UINT16:
       onval = "16-bit short";
       break;
+    case UINT32:
+      onval = "32-bit word";
+      break;
+    case UINT64:
+      onval = "64-bit word";
+      break;
     default:
       onval = "bit";
     }
 
-  switch (base)
+  switch (cxt.base)
     {
     case NATURAL:
       inval = "nats";
