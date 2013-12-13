@@ -16,13 +16,15 @@ typedef enum entropy_alphabet_ {
   UINT16,
   UINT32,
   UINT64,
-  ASCII,
-  UNICODE
+  CHARS,
+  WORDS
 } entropy_alphabet;
 
 typedef struct entropy_context_ {
   entropy_alphabet alphabet;
   entropy_base base;
+  int ignore_punctuation;
+  int ignore_case;
 } entropy_context;
 
 #endif

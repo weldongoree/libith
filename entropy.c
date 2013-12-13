@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <wchar.h>
 
 void usage()
 {
@@ -50,6 +51,11 @@ ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt)
   char holderarr[8];
   bytebits bbholder;
   int i;
+  char *buff;
+  long file_length;
+  size_t bytes_read;
+  wchar_t wholder;
+
   switch (cxt.alphabet)
     {
     case BYTES:
@@ -89,6 +95,12 @@ ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt)
 	  ith_add_data(alph, &holder64, sizeof(uint64_t));	
 	}
       break;
+    case CHARS:
+      while ((wholder = fgetwc(fp)) != WEOF)
+	{
+	  ith_add_data(alph, &wholder, sizeof(wchar_t));
+	}
+      break;
     default:
       printf("Not really doing anything...\n");
       if (fflag)
@@ -103,7 +115,6 @@ ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt)
       fclose(fp);
     }
 
-
   return alph;
 }
 
@@ -114,6 +125,7 @@ int main(int argc, char **argv)
   int fflag = 0;
   int pflag = 0;
   int hflag = 0;
+  int iflag = 0;
   char *uval=NULL;
   char *aval=NULL;
   char *fval=NULL;
@@ -126,8 +138,9 @@ int main(int argc, char **argv)
 
   cxt.alphabet = BYTES;
   cxt.base = BINARY;
+  cxt.ignore_punctuation = 0;
 
-  while ((c = getopt (argc, argv, "a:f:hpu:")) != -1)
+  while ((c = getopt (argc, argv, "a:f:hipu:")) != -1)
     {
       switch (c)
 	{
@@ -141,6 +154,9 @@ int main(int argc, char **argv)
 	  break;
 	case 'h':
 	  hflag=1;
+	  break;
+	case 'i':
+	  iflag=1;
 	  break;
 	case 'p':
 	  pflag=1;
@@ -168,6 +184,11 @@ int main(int argc, char **argv)
     return(0);
   }
 
+  if (iflag)
+    {
+      cxt.ignore_punctuation = 1;
+    }
+
   if (aflag)
     {
       if (!strcmp(aval, "2"))
@@ -185,6 +206,10 @@ int main(int argc, char **argv)
       else if (!strcmp(aval, "64"))
 	{
 	  cxt.alphabet=UINT64;
+	}
+      else if (!strcmp(aval, "char"))
+	{
+	  cxt.alphabet=CHARS;
 	}
     }
 
@@ -217,6 +242,9 @@ int main(int argc, char **argv)
       break;
     case UINT64:
       onval = "64-bit word";
+      break;
+    case CHARS:
+      onval = "character glyph";
       break;
     default:
       onval = "bit";
