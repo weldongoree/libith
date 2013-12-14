@@ -1,35 +1,40 @@
 #include "load.h"
-#include "pmf.h"
 
 int next_word(FILE *fp, wchar_t *wbuff, int len)
 {
   int i;
+  int in_word = 0;
+  int word_length = 0;
   wchar_t w;
-  for (i=0; i<len; i++)
+  for (i = 0; i < len; i++)
     {
       wbuff[i] = (wchar_t) 0;
     }
-  for (i=0; i<len; i++)
+  for (i = 0; i < len; i++)
     {
       w = fgetwc(fp);
       if (w == WEOF)
 	{
-	  if (i == 0)
-	    return -1;
-	  else
-	    return i;
+	  printf("returning %d after EOF\n", word_length);
+	  return word_length;
 	}
-      else if ((!iswalpha(w)) && (i > 0))
+      else if (!iswblank(w))
 	{
-	  return i;
-	} 
-      else 
-	{
+	  in_word=1;
 	  wbuff[i] = w;
+	  word_length++;
+	}
+      else if (iswblank(w))
+	{
+	  if (in_word)
+	    {
+	      printf("returning %d after word\n", word_length);
+	      return word_length;
+	    }
 	}
     }
-  /* shouldn't get here */
-  return 0;
+  printf("Returning %d at end of function\n", word_length);
+  return word_length;
 }
 
 ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
@@ -37,6 +42,8 @@ ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
   FILE *fp;
 
   ith_pmf *alph;
+
+  int word_length;
 
   if (!fflag)
     {
@@ -64,11 +71,11 @@ ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
   uint64_t holder64;
   char holderarr[8];
   bytebits bbholder;
+  wchar_t wbuff[255];
+
   int i;
 
   wchar_t wholder;
-  wchar_t wbuff[255];
-  int word_length;
 
   switch (cxt.alphabet)
     {
@@ -116,11 +123,10 @@ ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
 	}
       break;
     case WORDS:
-      /* TODO: fix this */
-      /*      while ((word_length = next_word(fp, wbuff, 255)) != 0)
+      while ((word_length = next_word(fp, wbuff, 255)))
 	{
 	  ith_add_data(alph, wbuff, word_length * sizeof(wchar_t));
-	  } */ 
+	}
       break;
     default:
       printf("Not really doing anything...\n");

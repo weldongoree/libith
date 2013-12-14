@@ -1,6 +1,8 @@
 #include "pmf.h"
+#include "chisquare.h"
 #include "entropy.h"
 #include "bits.h"
+
 
 #include <ctype.h>
 #include <stdio.h>
@@ -28,21 +30,30 @@ int main(int argc, char **argv)
   int pflag = 0;
   int hflag = 0;
   int iflag = 0;
+  int xflag = 0;
+
+  double ent = 0.;
+
   char *uval=NULL;
   char *aval=NULL;
   char *fval=NULL;
   char *inval=NULL;
   char *onval=NULL;
-  int c;
-  ith_pmf *alph;
-  double ent;
+
+  ith_pmf *pmf;
+
   entropy_context cxt;
+
+  chisquare_result chisq;
 
   cxt.alphabet = BYTES;
   cxt.base = BINARY;
   cxt.ignore_punctuation = 0;
 
-  while ((c = getopt (argc, argv, "a:f:hipu:")) != -1)
+
+  int c;
+
+  while ((c = getopt (argc, argv, "a:f:hipu:x")) != -1)
     {
       switch (c)
 	{
@@ -66,6 +77,9 @@ int main(int argc, char **argv)
 	case 'u':
 	  uflag=1;
 	  uval=optarg;
+	  break;
+	case 'x':
+	  xflag=1;
 	  break;
 	case '?':
 	  if ('a' == optopt || 'f' == optopt || 'u' == optopt)
@@ -139,62 +153,69 @@ int main(int argc, char **argv)
 	}
     }
 
-  alph = load_from_file(fflag, fval, cxt);
+  pmf = load_from_file(fflag, fval, cxt);
   
-  calculate_frequencies(alph);
+  calculate_frequencies(pmf);
 
-  switch (cxt.alphabet)
+  if (xflag)
     {
-    case BITS:
-      onval = "bit";
-      break;
-    case BYTES:
-      onval = "byte";
-      break;
-    case UINT16:
-      onval = "16-bit short";
-      break;
-    case UINT32:
-      onval = "32-bit word";
-      break;
-    case UINT64:
-      onval = "64-bit word";
-      break;
-    case CHARS:
-      onval = "character glyph";
-      break;
-    case WORDS:
-      onval = "alphabetic word";
-      break;
-    default:
-      printf("Alphabet needs to be one of 1, 8, 16, 32, 64, char, and word\n");
-      return 0;
+      chisq = chisquare(pmf);
+      printf("chisquare = %f, %llu degrees of freedom\n", chisq.chisquare, chisq.degrees);
     }
-
-  switch (cxt.base)
+  else
     {
-    case NATURAL:
-      inval = "nats";
-      ent = entropye(alph);
-      break;
-    case DECIMAL:
-      inval = "digits";
-      ent = entropy10(alph);
-      break;
-    default:
-      inval = "bits";
-      ent = entropy2(alph);
-    }
+      switch (cxt.alphabet)
+	{
+	case BITS:
+	  onval = "bit";
+	  break;
+	case BYTES:
+	  onval = "byte";
+	  break;
+	case UINT16:
+	  onval = "16-bit short";
+	  break;
+	case UINT32:
+	  onval = "32-bit word";
+	  break;
+	case UINT64:
+	  onval = "64-bit word";
+	  break;
+	case CHARS:
+	  onval = "character glyph";
+	  break;
+	case WORDS:
+	  onval = "alphabetic word";
+	  break;
+	default:
+	  printf("Alphabet needs to be one of 1, 8, 16, 32, 64, char, and word\n");
+	  return 0;
+	}
+      
+      switch (cxt.base)
+	{
+	case NATURAL:
+	  inval = "nats";
+	  ent = entropye(pmf);
+	  break;
+	case DECIMAL:
+	  inval = "digits";
+	  ent = entropy10(pmf);
+	  break;
+	default:
+	  inval = "bits";
+	  ent = entropy2(pmf);
+	}
 
       printf("Entropy is %f %s per %s\n", ent, inval, onval);
-
+    }
 
   if (pflag)
     {
-      print_ith_pmf(alph);
+      print_ith_pmf(pmf);
     }
 
-  destroy_pmf(alph);
+  destroy_pmf(pmf);
   return 0;
 
 }
