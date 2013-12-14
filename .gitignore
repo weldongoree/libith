@@ -6,6 +6,8 @@
 *.exe
 *.o
 *.so
+ith
+libith.so.0.0
 
 # Packages #
 ############
