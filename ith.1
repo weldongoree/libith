@@ -9,20 +9,27 @@ ith [COMMAND] [OPTIONS]
 ith builds a Probability Mass Function (PMF) from its input and performs information-theoretic calculations on that PMF.
 .SH COMMANDS
 .IP -h	
-Print usage and exit
+Print usage and exit. This overrides any other commands supplied.
+.IP -c
+Show coverage of alphabet requested (e.g. what percent of all 255 possible bytes are not found in the sample).
 .IP -e	
-Compute entropy (default if no command specified)
+Compute entropy (this is the default if no command is specified).
 .IP -k
-Compute Kullback-Leibler divergence against a uniform distribution
+Compute Kullback-Leibler divergence against a uniform distribution.
 .IP -p	
 Print the resulting PMF; semantics will vary based on the alphabet chosen below (in particular, 
 .B word
 will display the string parsed as a word; the rest will display numbers or memory locations since wide char streams make terminals futzy).
 .IP -x	
-Run the Pearson chi-squared test against the null hypothesis of uniform distribution over the alphabet
+Run the Pearson chi-squared test against the null hypothesis of uniform distribution over the alphabet.
+.IP -A
+Equivalent to -x -k -e -c.
+
+If more than one command (other than -h) is specified, the output of each will be separated by a newline. 
+
 .SH OPTIONS
 .IP "-a 1 | 8 | 16 | 32 | 64 | char | word | wchar | wword"
-Choose the alphabet the input is read over. A number is that number of bits (so, bits, bytes, shorts, ints, and longs, on many platforms). 
+Choose the alphabet by which the input is parsed. A number is that number of bits (so, bits, bytes, shorts, ints, and longs, on many platforms). 
 .B char 
 and 
 .B wchar 
@@ -40,21 +47,16 @@ or
 .B wword 
 is the wide character analog. Note that this is a different standard than 
 .BR wc(1)
-uses to determine word divisions.
+uses to determine word divisions. Note also that your LOCALE will matter if you use
+.B wword
+or
+.B wchar.
 .IP "-f filename"
 Read from the specified file. Default is stdin.
-.IP "-t"
-Be terse; simply print the number rather than a sentence. (Has no effect when -p is specified.)
+.IP -t
+Be terse; simply print the number rather than a sentence. If multiple commands are specified, -t will apply to all of them. This does not effect the output of the -h or -p commands.
 .IP "-u 2 | e | 10"
-Choose the unit of information for calculation. 2 is bits (this is the default). e is nats (use 
-.BR log(3)
-rather than 
-.BR log2(3)
-). 10 is digits (use 
-.BR log10(3)
-rather than 
-.BR log2(3)
-).
+Choose the unit of information for calculation. 2 is bits (this is the default). e is nats. 10 is digits.
 .SH AUTHOR
 Weldon Goree (weldon@libith.org)
 

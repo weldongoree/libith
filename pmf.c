@@ -4,6 +4,31 @@
 #include <string.h>
 #include <stdio.h>
 
+unsigned long long missing_coverage(ith_pmf *pmf, ith_context ctx)
+{
+  unsigned long long missing = 0ULL;
+  switch (ctx.alphabet)
+    {
+    case BITS:
+      missing = ITH_MAX_BIT - pmf->length;
+      break;
+    case BYTES:
+      missing = ITH_MAX_BYTE - pmf->length;
+      break;
+    case UINT16:
+      missing = ITH_MAX_UINT16 - pmf->length;
+      break;
+    case UINT32:
+      missing = ITH_MAX_UINT32 - pmf->length;
+      break;
+    case UINT64:
+      missing = ITH_MAX_UINT64 - pmf->length;
+      break;
+    default:
+      printf("Coverage requires an integer alphabet\n");
+    }
+  return missing;
+}
 
 
 void print_ith_context(ith_context ctx)
@@ -252,7 +277,7 @@ void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
       printf("\n");
       search = search->next;
     }
-  printf("Total length: %d\n", (int) pmf->length);
+  printf("Total length: %llu\n", (int) pmf->length);
   printf("Sum: %d\n", (int) pmf_sum(pmf));
 }
 

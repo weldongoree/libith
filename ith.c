@@ -14,19 +14,28 @@
 
 void usage()
 {
-  printf("Entropy: compute the entropy of a file\n");
-  printf("entropy -h | [-a byte bit uint16_t uint32_t uint64_t] [-u binary | natural | decimal] [-p]\n");
-  printf("Options: -a bytes etc. (the alphabet you're reading over)\n");
-  printf("\t-u binary | natural | decimal (compute in bits, nats, or digits)\n");
-  printf("-p print summary of the probability distribution from the sample\n");
-  printf("-h print this usage message\n");
+  /*RULER |-----------------------------------------------------------------------------| */
+  printf("ith [COMMAND] [OPTIONS]\n\n");
+  printf("COMMAND is zero or more of:\n");
+  printf("-e entropy (this is the default if no command is specified)\n");
+  printf("-c domain coverage\n");
+  printf("-k Killback-Leibler divergence\n");
+  printf("-x Pearson chi-squared for randomness\n");
+  printf("-p print the resulting PMF\n");
+  printf("-A equivalent to -e -c -k -x\n\n");
+  printf("OPTIONS are zero or more of:\n");
+  printf("-a 1 | 8 | 16 | 32 | 64 | char | wchar | word | wword (default is 8)\n");
+  printf("-u 2 | e | 10 (default is 2)\n");
+  printf("-f FILENAME (default is stdin)\n");
+  printf("-t print tersely (just the numbers, no sentences)\n\n");
+  printf("See ith(1) for more information.\n");
   return;
 }
 
 int main(int argc, char **argv) 
 {
-  int uflag = 0;
   int aflag = 0;
+  int cflag = 0;
   int eflag = 1;
   int fflag = 0;
   int pflag = 0;
@@ -35,9 +44,14 @@ int main(int argc, char **argv)
   int kflag = 0;
   int xflag = 0;
   int tflag = 0;
+  int uflag = 0;
+
+  unsigned long long miss = 0ULL;
+  unsigned long long all_possible = ITH_MAX_BYTE;
 
   double ent = 0.;
   double kl = 0.;
+  double misspercent = 0.;
 
   char *uval=NULL;
   char *aval=NULL;
@@ -58,13 +72,23 @@ int main(int argc, char **argv)
 
   int c;
 
-  while ((c = getopt (argc, argv, "a:ef:hikptu:x")) != -1)
+  while ((c = getopt (argc, argv, "Aa:cef:hikptu:x")) != -1)
     {
       switch (c)
 	{
+	case 'A':
+	  eflag=1;
+	  xflag=1;
+	  cflag=1;
+	  kflag=1;
+	  break;
 	case 'a':
 	  aflag=1;
 	  aval=optarg;
+	  break;
+	case 'c':
+	  cflag=1;
+	  eflag=0;
 	  break;
 	case 'e':
 	  break;
@@ -128,26 +152,31 @@ int main(int argc, char **argv)
 	{
 	  cxt.alphabet=BITS;
 	  onval="bit";
+	  all_possible = ITH_MAX_BIT;
 	}
       else if (!strcmp(aval, "8"))
 	{
 	  cxt.alphabet=BYTES;
 	  onval="byte";
+	  all_possible = ITH_MAX_BYTE;
 	}
       else if (!strcmp(aval, "16"))
 	{
 	  cxt.alphabet=UINT16;
 	  onval="16-bit short";
+	  all_possible=ITH_MAX_UINT16;
 	}
       else if (!strcmp(aval, "32"))
 	{
 	  cxt.alphabet=UINT32;
 	  onval="32-bit int";
+	  all_possible=ITH_MAX_UINT32;
 	}
       else if (!strcmp(aval, "64"))
 	{
 	  cxt.alphabet=UINT64;
 	  onval="64-bit int";
+	  all_possible=ITH_MAX_UINT64;
 	}
       else if (!strcmp(aval, "char"))
 	{
@@ -198,9 +227,29 @@ int main(int argc, char **argv)
   if (xflag)
     {
       chisq = chisquare(pmf);
+      if (tflag)
+	{
+	  printf("%f\n", chisq.chisquare);
+	}
+      else
+	{
       printf("chisquare = %f, %llu degrees of freedom\n", chisq.chisquare, chisq.degrees);
+	}
     }
-  else if (kflag)
+  if (cflag)
+    {      
+      miss = missing_coverage(pmf, cxt);
+      misspercent = 100. * ((double) miss / (double) all_possible);
+      if (tflag)
+	{
+	  printf("%llu\n", miss);
+	}
+      else
+	{
+	  printf("Sample misses %llu of %llu possibilities, or %f%%\n", miss, all_possible, misspercent);
+	}
+    }
+  if (kflag)
     {
       switch (cxt.base)
 	{
@@ -225,11 +274,11 @@ int main(int argc, char **argv)
 	  printf("Kullback-Leibler divergence is %f %s per %s\n", kl, inval, onval);
 	}
     }
-  else if (pflag)
+  if (pflag)
     {
       print_ith_pmf(pmf, cxt);
     }
-  else if (eflag)
+  if (eflag)
     {
       switch (cxt.base)
 	{

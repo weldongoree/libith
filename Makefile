@@ -18,6 +18,7 @@ all: $(BINNAME)
 
 shared: $(LIBOBJS)
 	$(CC) $(SHAREDFLAGS) $(CFLAGS) -o $(LIBNAME) $(LIBOBJS)
+	rm -f $(LIBBASENAME)
 	ln -s $(LIBNAME) $(LIBBASENAME)
 $(BINNAME): ith.c $(DEPS) shared
 	$(CC) $(CFLAGS) $(LOCALLINK) $(LIBS) -o ith ith.c

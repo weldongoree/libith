@@ -2,6 +2,12 @@
 #define __LIBITH_PMF_H
 #include <stdlib.h>
 
+#define ITH_MAX_BIT 2ULL
+#define ITH_MAX_BYTE 0xFFULL
+#define ITH_MAX_UINT16 0xFFFFULL
+#define ITH_MAX_UINT32 0xFFFFFFFFULL
+#define ITH_MAX_UINT64 0xFFFFFFFFFFFFFFFFULL
+
 typedef enum ith_base_ {
   BINARY,
   NATURAL,
@@ -39,10 +45,12 @@ typedef struct ith_symbol_ {
 } ith_symbol;
 
 typedef struct ith_pmf_ {
-  int length;
+  unsigned long long length;
   ith_symbol *head;
   int calculated;
 } ith_pmf;
+
+unsigned long long missing_coverage(ith_pmf *, ith_context);
 
 int ith_symbol_equals(ith_symbol *, ith_symbol *);
 
