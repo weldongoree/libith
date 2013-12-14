@@ -1,0 +1,36 @@
+.\" Manpage for ith.
+.\" Contact weldon@b.rontosaur.us to correct errors or typos
+.TH ith 1 "14 Dec 2013" "1.0" "User Commands"
+.SH NAME
+ith \- calculate information theory properties of files
+.SH SYNOPSIS
+ith [COMMAND] [OPTIONS]
+.SH DESCRIPTION
+ith builds a Probability Mass Function (PMF) from its input and performs information-theoretic calculations on that PMF.
+.SH COMMANDS
+.IP -h	
+Print usage and exit
+.IP -e	
+Compute entropy (default if no command specified)
+.IP -p	
+Print the resulting PMF 
+.IP -x	
+Run the Pearson chi-squared test against the null hypothesis of uniform distribution over the alphabet
+.SH OPTIONS
+.IP "-a 1 | 8 | 16 | 32 | 64 | char | word | wchar | wword"
+Choose the alphabet the input is read over. A number is that number of bits (so, bits, bytes, shorts, ints, and longs, on many platforms). char and wchar are whatever fgetc() and fgetwc() read on your platform. word is a textual word, separated by characters that satisfy isspace() or ispunct(). wword is the wide character analog.
+.IP "-f filename"
+Read from the specified file. Default is stdin.
+.IP "-u 2 | e | 10"
+Choose the unit of information for calculation. 2 is bits (this is the default). e is nats (use 
+.BR log(3)
+rather than 
+.BR log2(3)
+). 10 is digits (use 
+.BR log10(3)
+rather than 
+.BR log2(3)
+).
+.SH AUTHOR
+Weldon Goree (weldon@b.rontosaur.us)
+

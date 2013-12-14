@@ -2,10 +2,11 @@ This is a library for computing entropy and other information-theory-related fun
 
 Also, this is absurdly non-optimized as of now; I'm working on making sure it's correct at the expense of higher memory usage and slower i/o.
 
-make entropy will produce a binary called "entropy". Its options are
+make entropy will produce a binary called "ith". Its options are
 
--a 2 | 8 | 16 | 32 | 64 | char  (width of alphabet; char is wchar_t)
--u binary | decimal | natural (compute in bits, digits, and nats respectively)
+-x print the Pearson chi-squared against the null hypothesis of uniform distribution (default is to print the entropy)
+-a 2 | 8 | 16 | 32 | 64 | char | wchar | word | wword (width of alphabet)
+-u binary | decimal | natural (compute information in bits, digits, and nats respectively)
 -f file (default reads from stdin)
 -p print the probability distribution of the sample in addition to the entropy
 
