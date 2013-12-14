@@ -1,7 +1,32 @@
 #ifndef __LIBITH_PMF_H
 #define __LIBITH_PMF_H
-
 #include <stdlib.h>
+
+typedef enum ith_base_ {
+  BINARY,
+  NATURAL,
+  DECIMAL,
+  CUSTOM
+} ith_base;
+
+typedef enum ith_alphabet_ {
+  BITS,
+  BYTES,
+  UINT16,
+  UINT32,
+  UINT64,
+  CHARS,
+  WORDS
+} ith_alphabet;
+
+typedef struct ith_context_ {
+  ith_alphabet alphabet;
+  ith_base base;
+  int ignore_punctuation;
+  int ignore_case;
+} ith_context;
+
+
 
 typedef struct ith_symbol_ {
   void * data;
@@ -47,6 +72,6 @@ double entropye(ith_pmf *);
 
 double entropy(ith_pmf *, double);
 
-void print_ith_pmf(ith_pmf *);
+void print_ith_pmf(ith_pmf *, ith_context);
 
 #endif /* __LIBITH_PMF_H */

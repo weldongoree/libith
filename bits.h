@@ -1,7 +1,6 @@
 #ifndef __LIBITH_BITS_H
 #define __LIBITH_BITS_H
 
-#include "pmf.h"
 #include <stdint.h>
 
 typedef struct bytebits_ {

@@ -1,8 +1,7 @@
 #include "pmf.h"
 #include "bits.h"
-#include "entropy.h"
+#include "ith.h"
 #include <string.h>
-#include <math.h>
 #include <stdio.h>
 
 
@@ -168,83 +167,8 @@ void calculate_frequencies(ith_pmf *alph)
     }
   return;
 }
-
-double entropy2(ith_pmf *alph)
+void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
 {
-  double res=0.;
-  if (alph->calculated != 0)
-    {
-      if (alph && alph->head)
-	{
-	  ith_symbol *search = alph->head;
-	  while (search)
-	    {
-	      res = res - (search->freq * log2(search->freq));
-	      search = search->next;
-	    }
-	}
-    }
-  return res;
-}
-
-double entropy10(ith_pmf *alph)
-{
-  double res=0.;
-  if (alph->calculated != 0)
-    {
-      if (alph && alph->head)
-	{
-	  ith_symbol *search = alph->head;
-	  while (search)
-	    {
-	      res = res - (search->freq * log10(search->freq));
-	      search = search->next;
-	    }
-	}
-    }
-  return res;
-}
-
-double entropye(ith_pmf *alph)
-{
-  double res=0.;
-  if (alph->calculated != 0)
-    {
-      if (alph && alph->head)
-	{
-	  ith_symbol *search = alph->head;
-	  while (search)
-	    {
-	      res = res - (search->freq * log(search->freq));
-	      search = search->next;
-	    }
-	}
-    }
-  return res;
-}
-
-double entropy(ith_pmf *alph, double base)
-{
-  double res=0.;
-  if (alph->calculated != 0)
-    {
-      if (alph && alph->head)
-	{
-	  ith_symbol *search = alph->head;
-	  while (search)
-	    {
-	      res = res - (search->freq * log(search->freq) / log(base));
-	      search = search->next;
-	    }
-	}
-    }
-  return res;
-
-}
-
-void print_ith_pmf(ith_pmf *pmf)
-{
-  int data;
   int *dataptr;
   int count;
   if (!pmf)
@@ -262,9 +186,8 @@ void print_ith_pmf(ith_pmf *pmf)
   while (search)
     {
       dataptr = search->data;
-      data = (int) *dataptr;
       count = (int) search->count;
-      printf("Node: %x\n", data);
+      printf("Node: %x\n", *dataptr);
       printf("Count: %d\n", count);
       printf("Freq: %f\n", search->freq);
       printf("\n");

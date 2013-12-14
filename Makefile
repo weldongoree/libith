@@ -1,15 +1,22 @@
 CC=gcc
-LIBS=-lm
-BINOBJS=entropy.o pmf.o bits.o load.o chisquare.o
-BINTGT=entropy
-DEPS=pmf.h entropy.h bits.h load.h chisquare.h
+LIBS=-lm -lith
+PICFLAGS=-fPIC
+LIBOBJS=pmf.o bits.o load.o chisquare.o entropy.o
+DEPS=pmf.h ith.h bits.h load.h chisquare.h
 CFLAGS=-g -Wall
+LOCALLINK=-L.
+SHAREDFLAGS=-shared
+LIBNAME=libith.so.0.0
+BINNAME=ith
+
+shared: $(LIBOBJS)
+	$(CC) $(SHAREDFLAGS) $(CFLAGS) -o $(LIBNAME) $(LIBOBJS)
+
+$(BINNAME): ith.c $(DEPS) shared
+	$(CC) $(CFLAGS) $(LOCALLINK) $(LIBS) -o ith ith.c
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-$(BINTGT): $(BINOBJS)
-	$(CC) $(CFLAGS) ${LIBS} -o entropy $(BINOBJS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(PICFLAGS)
 
 clean:
-	rm -f $(BINOBJS) $(BINTGT)
+	rm -f $(LIBOBJS) $(BINTGT) $(LIBNAME) $(BINNAME)

@@ -1,4 +1,7 @@
 #include "load.h"
+#include "bits.h"
+#include "pmf.h"
+
 
 int next_word(FILE *fp, wchar_t *wbuff, int len)
 {
@@ -15,7 +18,6 @@ int next_word(FILE *fp, wchar_t *wbuff, int len)
       w = fgetwc(fp);
       if (w == WEOF)
 	{
-	  printf("returning %d after EOF\n", word_length);
 	  return word_length;
 	}
       else if (!iswblank(w))
@@ -28,7 +30,6 @@ int next_word(FILE *fp, wchar_t *wbuff, int len)
 	{
 	  if (in_word)
 	    {
-	      printf("returning %d after word\n", word_length);
 	      return word_length;
 	    }
 	}
@@ -37,7 +38,7 @@ int next_word(FILE *fp, wchar_t *wbuff, int len)
   return word_length;
 }
 
-ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
+ith_pmf *load_from_file(int fflag, char *fval, ith_context cxt)
 {
   FILE *fp;
 
