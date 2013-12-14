@@ -138,7 +138,7 @@ void destroy_pmf(ith_pmf *alph)
     }
 }
 
-unsigned long long alphabet_sum(ith_pmf *alph)
+unsigned long long pmf_sum(ith_pmf *alph)
 {
   unsigned long long res = 0ULL;
   if (alph && alph->head)
@@ -157,7 +157,7 @@ void calculate_frequencies(ith_pmf *alph)
 {
   if (alph && alph->head)
     {
-      double sum = (double) alphabet_sum(alph);
+      double sum = (double) pmf_sum(alph);
       ith_symbol *search=alph->head;
       while (search)
 	{
@@ -249,12 +249,12 @@ void print_ith_pmf(ith_pmf *pmf)
   int count;
   if (!pmf)
     {
-      printf("Trying to print void alphabet; bye\n");
+      printf("Trying to print void PMF; bye\n");
       return;
     }
   if (!(pmf->head))
     {
-      printf("Trying to print alphabet with no nodes; bye\n");
+      printf("Trying to print PMF with no nodes; bye\n");
       return;
     }
   ith_symbol *search = pmf->head;
@@ -271,6 +271,6 @@ void print_ith_pmf(ith_pmf *pmf)
       search = search->next;
     }
   printf("Total length: %d\n", (int) pmf->length);
-  printf("Sum: %d\n", (int) alphabet_sum(pmf));
+  printf("Sum: %d\n", (int) pmf_sum(pmf));
 }
 

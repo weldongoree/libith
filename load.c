@@ -1,6 +1,36 @@
 #include "load.h"
+#include "pmf.h"
 
-rep
+int next_word(FILE *fp, wchar_t *wbuff, int len)
+{
+  int i;
+  wchar_t w;
+  for (i=0; i<len; i++)
+    {
+      wbuff[i] = (wchar_t) 0;
+    }
+  for (i=0; i<len; i++)
+    {
+      w = fgetwc(fp);
+      if (w == WEOF)
+	{
+	  if (i == 0)
+	    return -1;
+	  else
+	    return i;
+	}
+      else if ((!iswalpha(w)) && (i > 0))
+	{
+	  return i;
+	} 
+      else 
+	{
+	  wbuff[i] = w;
+	}
+    }
+  /* shouldn't get here */
+  return 0;
+}
 
 ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
 {
@@ -37,6 +67,8 @@ ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
   int i;
 
   wchar_t wholder;
+  wchar_t wbuff[255];
+  int word_length;
 
   switch (cxt.alphabet)
     {
@@ -73,8 +105,6 @@ ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
     case UINT64:
       while ( ((holderarr[0] = fgetc(fp)) != EOF) && ((holderarr[1] = fgetc(fp)) != EOF) && ((holderarr[2] = fgetc(fp)) != EOF) && ((holderarr[3] = fgetc(fp)) != EOF) && ((holderarr[4] = fgetc(fp)) != EOF) && ((holderarr[5] = fgetc(fp)) != EOF) && ((holderarr[6] = fgetc(fp)) != EOF) && ((holderarr[7] = fgetc(fp)) != EOF))
 	{
-	/* TODO: this is wrong; holderarr[0] can't be shifted that much */
-
 	  holder64 = (((uint64_t)holderarr[0]) << 56) + (((uint64_t)holderarr[1]) << 48) + (((uint64_t)holderarr[2]) << 40) + (((uint64_t)holderarr[3]) << 32) + (((uint64_t)holderarr[4]) << 24) + (((uint64_t)holderarr[5]) << 16) + (((uint64_t)holderarr[6]) << 8) +holderarr[7];
 	  ith_add_data(alph, &holder64, sizeof(uint64_t));	
 	}
@@ -84,6 +114,13 @@ ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
 	{
 	  ith_add_data(alph, &wholder, sizeof(wchar_t));
 	}
+      break;
+    case WORDS:
+      /* TODO: fix this */
+      /*      while ((word_length = next_word(fp, wbuff, 255)) != 0)
+	{
+	  ith_add_data(alph, wbuff, word_length * sizeof(wchar_t));
+	  } */ 
       break;
     default:
       printf("Not really doing anything...\n");
@@ -101,4 +138,5 @@ ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt)
 
   return alph;
 }
+
 

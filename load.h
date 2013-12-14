@@ -2,6 +2,7 @@
 #define __ITH_LOAD_H
 #include <stdio.h>
 #include <wchar.h>
+#include <wctype.h>
 
 #include "bits.h"
 #include "pmf.h"
@@ -30,6 +31,10 @@ typedef struct entropy_context_ {
   int ignore_case;
 } entropy_context;
 
-ith_alphabet *load_from_file(int fflag, char *fval, entropy_context cxt);
+ith_pmf *load_from_file(int fflag, char *fval, entropy_context cxt);
+
+void *add_sample_from_file(ith_pmf *pmf, int fflag, char *fval, entropy_context cxt);
+
+int next_word(FILE *fp, wchar_t *buff, int len);
 
 #endif

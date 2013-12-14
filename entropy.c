@@ -93,9 +93,13 @@ int main(int argc, char **argv)
 
   if (aflag)
     {
-      if (!strcmp(aval, "2"))
+      if (!strcmp(aval, "1"))
 	{
 	  cxt.alphabet=BITS;
+	}
+      else if (!strcmp(aval, "8"))
+	{
+	  cxt.alphabet=BYTES;
 	}
       else if (!strcmp(aval, "16"))
 	{
@@ -113,6 +117,10 @@ int main(int argc, char **argv)
 	{
 	  cxt.alphabet=CHARS;
 	}
+      else if (!strcmp(aval, "word"))
+	{
+	  cxt.alphabet=WORDS;
+	}
     }
 
   if (uflag)
@@ -125,6 +133,10 @@ int main(int argc, char **argv)
 	{
 	  cxt.base=DECIMAL;
 	}
+      if (!strcmp(uval, "2"))
+	{
+	  cxt.base=BINARY;
+	}
     }
 
   alph = load_from_file(fflag, fval, cxt);
@@ -133,6 +145,9 @@ int main(int argc, char **argv)
 
   switch (cxt.alphabet)
     {
+    case BITS:
+      onval = "bit";
+      break;
     case BYTES:
       onval = "byte";
       break;
@@ -148,8 +163,12 @@ int main(int argc, char **argv)
     case CHARS:
       onval = "character glyph";
       break;
+    case WORDS:
+      onval = "alphabetic word";
+      break;
     default:
-      onval = "bit";
+      printf("Alphabet needs to be one of 1, 8, 16, 32, 64, char, and word\n");
+      return 0;
     }
 
   switch (cxt.base)

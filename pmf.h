@@ -23,7 +23,7 @@ size_t get_data_size(ith_symbol *);
 
 void * get_data(ith_symbol *);
 
-ith_pmf * new_alphabet();
+ith_pmf * new_pmf();
 
 ith_symbol * new_symbol(void *, size_t);
 
