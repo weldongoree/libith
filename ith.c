@@ -10,7 +10,7 @@
 #include "chisquare.h"
 #include "ith.h"
 #include "bits.h"
-
+#include "kldiv.h"
 
 void usage()
 {
@@ -31,10 +31,12 @@ int main(int argc, char **argv)
   int pflag = 0;
   int hflag = 0;
   int iflag = 0;
+  int kflag = 0;
   int xflag = 0;
   int tflag = 0;
 
   double ent = 0.;
+  double kl = 0.;
 
   char *uval=NULL;
   char *aval=NULL;
@@ -55,7 +57,7 @@ int main(int argc, char **argv)
 
   int c;
 
-  while ((c = getopt (argc, argv, "a:f:hiptu:x")) != -1)
+  while ((c = getopt (argc, argv, "a:f:hikptu:x")) != -1)
     {
       switch (c)
 	{
@@ -72,6 +74,9 @@ int main(int argc, char **argv)
 	  break;
 	case 'i':
 	  iflag=1;
+	  break;
+	case 'k':
+	  kflag=1;
 	  break;
 	case 'p':
 	  pflag=1;
@@ -188,6 +193,35 @@ int main(int argc, char **argv)
       chisq = chisquare(pmf);
       printf("chisquare = %f, %llu degrees of freedom\n", chisq.chisquare, chisq.degrees);
     }
+  else if (kflag)
+    {
+      switch (cxt.base)
+	{
+	case NATURAL:
+	  inval = "nats";
+	  kl = kldive(pmf);
+	  break;
+	case DECIMAL:
+	  inval = "digits";
+	  kl = kldiv10(pmf);
+	  break;
+	default:
+	  inval = "bits";
+	  kl = kldiv2(pmf);
+	}
+      if (tflag)
+	{
+	  printf("%f\n", kl);	  
+	}
+      else
+	{
+	  printf("Kullback-Leibler divergence is %f %s per %s\n", kl, inval, onval);
+	}
+    }
+  else if (pflag)
+    {
+      print_ith_pmf(pmf, cxt);
+    }
   else
     {
       switch (cxt.base)
@@ -212,11 +246,6 @@ int main(int argc, char **argv)
 	{
 	  printf("Entropy is %f %s per %s\n", ent, inval, onval);
 	}
-    }
-
-  if (pflag)
-    {
-      print_ith_pmf(pmf, cxt);
     }
 
   destroy_pmf(pmf);

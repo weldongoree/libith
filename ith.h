@@ -6,7 +6,7 @@
 #include "chisquare.h"
 #include "ith.h"
 #include "bits.h"
-
+#include "kldiv.h"
 
 
 
