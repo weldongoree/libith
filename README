@@ -1,13 +1,18 @@
-This is a library for computing entropy and other information-theory-related functions on data. Currently it will find the entropy of a file or stdin in bits, nats, or digits over the file's bytes. More options on their way; still far from an actual release.
+This is a library for computing entropy and other information-theory-related functions on data. Currently it will find the entropy, Kullback-Leibler, or chi squared of a file or stdin in bits, nats, or digits over the file's bits, bytes, ints, characters, or alphabetic words.
 
 Also, this is absurdly non-optimized as of now; I'm working on making sure it's correct at the expense of higher memory usage and slower i/o.
 
-make entropy will produce a binary called "ith". Its options are
+make will produce a shared library called libith.so.0.0 and a binary called "ith". Its takes the following commands and options:
 
--x print the Pearson chi-squared against the null hypothesis of uniform distribution (default is to print the entropy)
--a 2 | 8 | 16 | 32 | 64 | char | wchar | word | wword (width of alphabet)
--u binary | decimal | natural (compute information in bits, digits, and nats respectively)
+Commands:
+-e print the entropy of the input (this is the default if no command switch is given)
+-k print the Kullback-Leibler divergence of the actual distribution from a uniform distribution over the requested alphabet
+-x print the Pearson chi-squared against the null hypothesis of uniform distribution over the requested alphabet
+-p display the PMF calculated
+
+Options:
+-a 1 | 8 | 16 | 32 | 64 | char | wchar | word | wword (width of alphabet; consider the file a sequence of bits, bytes, shorts, etc.)
+-u 2 | 10 | e (compute information in bits, digits, and nats respectively; bits is default)
 -f file (default reads from stdin)
--p print the probability distribution of the sample in addition to the entropy
 
-entropy is one driver for what I hope will end up being a more general shared library.
+ith is a combined driver for what I hope will end up being a more general shared library.
