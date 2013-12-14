@@ -32,6 +32,7 @@ int main(int argc, char **argv)
   int hflag = 0;
   int iflag = 0;
   int xflag = 0;
+  int tflag = 0;
 
   double ent = 0.;
 
@@ -54,7 +55,7 @@ int main(int argc, char **argv)
 
   int c;
 
-  while ((c = getopt (argc, argv, "a:f:hipu:x")) != -1)
+  while ((c = getopt (argc, argv, "a:f:hiptu:x")) != -1)
     {
       switch (c)
 	{
@@ -74,6 +75,9 @@ int main(int argc, char **argv)
 	  break;
 	case 'p':
 	  pflag=1;
+	  break;
+	case 't':
+	  tflag=1;
 	  break;
 	case 'u':
 	  uflag=1;
@@ -111,39 +115,52 @@ int main(int argc, char **argv)
       if (!strcmp(aval, "1"))
 	{
 	  cxt.alphabet=BITS;
+	  onval="bit";
 	}
       else if (!strcmp(aval, "8"))
 	{
 	  cxt.alphabet=BYTES;
+	  onval="byte";
 	}
       else if (!strcmp(aval, "16"))
 	{
 	  cxt.alphabet=UINT16;
+	  onval="16-bit short";
 	}
       else if (!strcmp(aval, "32"))
 	{
 	  cxt.alphabet=UINT32;
+	  onval="32-bit int";
 	}
       else if (!strcmp(aval, "64"))
 	{
 	  cxt.alphabet=UINT64;
+	  onval="64-bit int";
 	}
       else if (!strcmp(aval, "char"))
 	{
 	  cxt.alphabet=CHARS;
+	  onval="8-bit character";
 	}
       else if (!strcmp(aval, "word"))
 	{
 	  cxt.alphabet=WORDS;
+	  onval="alphabetical word";
 	}
       else if (!strcmp(aval, "wchar"))
 	{
 	  cxt.alphabet=WCHARS;
+	  onval="wide character";
 	}
       else if (!strcmp(aval, "wword"))
 	{
 	  cxt.alphabet=WWORDS;
+	  onval="wide character word";
 	}
+    }
+  else
+    {
+      onval="byte";
     }
 
   if (uflag)
@@ -162,8 +179,6 @@ int main(int argc, char **argv)
 	}
     }
 
-  print_ith_context(cxt);
-
   pmf = load_from_file(fflag, fval, cxt);
   
   calculate_frequencies(pmf);
@@ -175,34 +190,6 @@ int main(int argc, char **argv)
     }
   else
     {
-      switch (cxt.alphabet)
-	{
-	case BITS:
-	  onval = "bit";
-	  break;
-	case BYTES:
-	  onval = "byte";
-	  break;
-	case UINT16:
-	  onval = "16-bit short";
-	  break;
-	case UINT32:
-	  onval = "32-bit word";
-	  break;
-	case UINT64:
-	  onval = "64-bit word";
-	  break;
-	case CHARS:
-	  onval = "character glyph";
-	  break;
-	case WORDS:
-	  onval = "alphabetic word";
-	  break;
-	default:
-	  printf("Alphabet needs to be one of 1, 8, 16, 32, 64, char, and word\n");
-	  return 0;
-	}
-      
       switch (cxt.base)
 	{
 	case NATURAL:
@@ -217,8 +204,14 @@ int main(int argc, char **argv)
 	  inval = "bits";
 	  ent = entropy2(pmf);
 	}
-
-      printf("Entropy is %f %s per %s\n", ent, inval, onval);
+      if (tflag)
+	{
+	  printf("%f\n", ent);	  
+	}
+      else
+	{
+	  printf("Entropy is %f %s per %s\n", ent, inval, onval);
+	}
     }
 
   if (pflag)
