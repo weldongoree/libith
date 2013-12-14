@@ -8,6 +8,13 @@ LOCALLINK=-L.
 SHAREDFLAGS=-shared
 LIBNAME=libith.so.0.0
 BINNAME=ith
+PREFIX=/usr/local/
+LIBDIR=lib/
+BINDIR=bin/
+LIBMAJORNAME=libith.so.0
+LIBBASENAME=libith.so
+
+all: $(BINNAME) 
 
 shared: $(LIBOBJS)
 	$(CC) $(SHAREDFLAGS) $(CFLAGS) -o $(LIBNAME) $(LIBOBJS)
@@ -20,3 +27,9 @@ $(BINNAME): ith.c $(DEPS) shared
 
 clean:
 	rm -f $(LIBOBJS) $(BINTGT) $(LIBNAME) $(BINNAME)
+
+install:
+	install -m 755 $(BINNAME) $(DESTDIR)$(PREFIX)$(BINDIR)
+	install -m 755 $(LIBNAME) $(DESTDIR)$(PREFIX)$(LIBDIR)
+	ln -s $(LIBNAME) $(DESTDIR)$(PREFIX)$(LIBDIR)$(LIBMAJORNAME)
+	ln -s $(LIBNAME) $(DESTDIR)$(PREFIX)$(LIBDIR)$(LIBBASENAME)

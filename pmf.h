@@ -16,7 +16,9 @@ typedef enum ith_alphabet_ {
   UINT32,
   UINT64,
   CHARS,
-  WORDS
+  WORDS,
+  WCHARS,
+  WWORDS
 } ith_alphabet;
 
 typedef struct ith_context_ {
@@ -26,7 +28,7 @@ typedef struct ith_context_ {
   int ignore_case;
 } ith_context;
 
-
+void print_ith_context(ith_context ctx);
 
 typedef struct ith_symbol_ {
   void * data;

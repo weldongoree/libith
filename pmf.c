@@ -5,6 +5,57 @@
 #include <stdio.h>
 
 
+
+void print_ith_context(ith_context ctx)
+{
+  switch (ctx.alphabet)
+    {
+    case BITS:
+      printf("Alphabet: bits\n");
+      break;
+    case BYTES:
+      printf("Alphabet: bytes\n");
+      break;
+    case UINT16:
+      printf("Alphabet: UINT16\n");
+      break;
+    case UINT32:
+      printf("Alphabet: UINT32\n");
+      break;
+    case UINT64:
+      printf("Alphabet: UINT64\n");
+      break;
+    case CHARS:
+      printf("Alphabet: chars\n");
+      break;
+    case WORDS:
+      printf("Alphabet: words\n");
+      break;
+    case WCHARS:
+      printf("Alphabet: wide chars\n");
+      break;
+    case WWORDS:
+      printf("Alphabet: wide words\n");
+      break;
+    }
+  switch (ctx.base)
+    {
+    case BINARY:
+      printf("Base: binary\n");
+      break;
+    case NATURAL:
+      printf("Base: natural\n");
+      break;
+    case DECIMAL:
+      printf("Base: decimal\n");
+      break;
+    case CUSTOM:
+      printf("Base: custom\n");
+      break;
+    }
+}
+
+
 int ith_symbol_equals(ith_symbol *a, ith_symbol *b) {
   if (a->size != b->size) {
     return 0;
@@ -187,7 +238,15 @@ void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
     {
       dataptr = search->data;
       count = (int) search->count;
-      printf("Node: %x\n", *dataptr);
+      if (cxt.alphabet == WORDS)
+	{
+	  printf("Node: %s\n", dataptr);
+	  printf("Strlen: %d\n", search->size);
+	}
+      else
+	{
+	  printf("Node: %x\n", *dataptr);
+	}
       printf("Count: %d\n", count);
       printf("Freq: %f\n", search->freq);
       printf("\n");

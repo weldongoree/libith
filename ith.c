@@ -136,6 +136,14 @@ int main(int argc, char **argv)
 	{
 	  cxt.alphabet=WORDS;
 	}
+      else if (!strcmp(aval, "wchar"))
+	{
+	  cxt.alphabet=WCHARS;
+	}
+      else if (!strcmp(aval, "wword"))
+	{
+	  cxt.alphabet=WWORDS;
+	}
     }
 
   if (uflag)
@@ -153,6 +161,8 @@ int main(int argc, char **argv)
 	  cxt.base=BINARY;
 	}
     }
+
+  print_ith_context(cxt);
 
   pmf = load_from_file(fflag, fval, cxt);
   
