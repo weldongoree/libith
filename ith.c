@@ -27,6 +27,7 @@ int main(int argc, char **argv)
 {
   int uflag = 0;
   int aflag = 0;
+  int eflag = 1;
   int fflag = 0;
   int pflag = 0;
   int hflag = 0;
@@ -57,7 +58,7 @@ int main(int argc, char **argv)
 
   int c;
 
-  while ((c = getopt (argc, argv, "a:f:hikptu:x")) != -1)
+  while ((c = getopt (argc, argv, "a:ef:hikptu:x")) != -1)
     {
       switch (c)
 	{
@@ -65,20 +66,25 @@ int main(int argc, char **argv)
 	  aflag=1;
 	  aval=optarg;
 	  break;
+	case 'e':
+	  break;
 	case 'f':
 	  fflag=1;
 	  fval=optarg;
 	  break;
 	case 'h':
+	  eflag=0;
 	  hflag=1;
 	  break;
 	case 'i':
 	  iflag=1;
 	  break;
 	case 'k':
+	  eflag=0;
 	  kflag=1;
 	  break;
 	case 'p':
+	  eflag=0;
 	  pflag=1;
 	  break;
 	case 't':
@@ -89,6 +95,7 @@ int main(int argc, char **argv)
 	  uval=optarg;
 	  break;
 	case 'x':
+	  eflag=0;
 	  xflag=1;
 	  break;
 	case '?':
@@ -222,7 +229,7 @@ int main(int argc, char **argv)
     {
       print_ith_pmf(pmf, cxt);
     }
-  else
+  else if (eflag)
     {
       switch (cxt.base)
 	{

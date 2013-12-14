@@ -13,16 +13,38 @@ Print usage and exit
 .IP -e	
 Compute entropy (default if no command specified)
 .IP -k
-Compute Kullback-Leibler divergence
+Compute Kullback-Leibler divergence against a uniform distribution
 .IP -p	
-Print the resulting PMF 
+Print the resulting PMF; semantics will vary based on the alphabet chosen below (in particular, 
+.B word
+will display the string parsed as a word; the rest will display numbers or memory locations since wide char streams make terminals futzy).
 .IP -x	
 Run the Pearson chi-squared test against the null hypothesis of uniform distribution over the alphabet
 .SH OPTIONS
 .IP "-a 1 | 8 | 16 | 32 | 64 | char | word | wchar | wword"
-Choose the alphabet the input is read over. A number is that number of bits (so, bits, bytes, shorts, ints, and longs, on many platforms). char and wchar are whatever fgetc() and fgetwc() read on your platform. word is a textual word, separated by characters that satisfy isspace() or ispunct(). wword is the wide character analog.
+Choose the alphabet the input is read over. A number is that number of bits (so, bits, bytes, shorts, ints, and longs, on many platforms). 
+.B char 
+and 
+.B wchar 
+are whatever 
+.BR fgetc(3) 
+and 
+.BR fgetwc(3) 
+read on your platform. 
+.B word
+is a textual word, separated by characters that satisfy 
+.BR isspace(3)
+or 
+.BR ispunct(3)
+; 
+.B wword 
+is the wide character analog. Note that this is a different standard than 
+.BR wc(1)
+uses to determine word divisions.
 .IP "-f filename"
 Read from the specified file. Default is stdin.
+.IP "-t"
+Be terse; simply print the number rather than a sentence. (Has no effect when -p is specified.)
 .IP "-u 2 | e | 10"
 Choose the unit of information for calculation. 2 is bits (this is the default). e is nats (use 
 .BR log(3)
@@ -34,5 +56,5 @@ rather than
 .BR log2(3)
 ).
 .SH AUTHOR
-Weldon Goree (weldon@b.rontosaur.us)
+Weldon Goree (weldon@libith.org)
 

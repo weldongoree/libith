@@ -12,6 +12,7 @@ Commands:
 
 Options:
 -a 1 | 8 | 16 | 32 | 64 | char | wchar | word | wword (width of alphabet; consider the file a sequence of bits, bytes, shorts, etc.)
+-t be terse; simply print the answer (default prints an English sentence)
 -u 2 | 10 | e (compute information in bits, digits, and nats respectively; bits is default)
 -f file (default reads from stdin)
 
