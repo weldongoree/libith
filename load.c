@@ -104,7 +104,6 @@ ith_pmf *load_from_file(int fflag, char *fval, ith_context cxt)
   uint16_t holder16;
   uint32_t holder32;
   uint64_t holder64;
-  char holderarr[8];
   bytebits bbholder;
   wchar_t wbuff[255];
   char buff[255];

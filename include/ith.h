@@ -1,12 +1,56 @@
-#ifndef __LIBITH_PMF_H
-#define __LIBITH_PMF_H
-#include <stdlib.h>
+#ifndef ITH_H
+#define ITH_H
 
 #define ITH_MAX_BIT 2ULL
 #define ITH_MAX_BYTE 0xFFULL
 #define ITH_MAX_UINT16 0xFFFFULL
 #define ITH_MAX_UINT32 0xFFFFFFFFULL
 #define ITH_MAX_UINT64 0xFFFFFFFFFFFFFFFFULL
+
+typedef struct bytebits_ {
+  uint8_t bits[8];
+} bytebits;
+
+bytebits explode_byte(uint8_t);
+
+#endif
+#ifndef __LIBITH_CHISQUARE_H
+#define __LIBITH_CHISQUARE_H
+#include "pmf.h"
+
+typedef struct chisquare_result_ {
+  double chisquare;
+  long long degrees;
+} chisquare_result;
+
+chisquare_result chisquare(ith_pmf *);
+
+chisquare_result chisquarefull(ith_pmf *, ith_context cxt);
+
+double find_q(ith_context cxt);
+
+double kldiv(ith_pmf *, double);
+
+double kldiv2(ith_pmf *);
+
+double kldive(ith_pmf *);
+
+double kldiv10(ith_pmf *);
+
+double kldivfull(ith_pmf *, double, ith_context);
+
+double kldiv2full(ith_pmf *, ith_context);
+
+double kldivefull(ith_pmf *, ith_context);
+
+double kldiv10full(ith_pmf *, ith_context);
+
+ith_pmf *load_from_file(int fflag, char *fval, ith_context cxt);
+
+void *add_sample_from_file(ith_pmf *pmf, int fflag, char *fval, ith_context cxt);
+
+int next_word(FILE *fp, char *buff, int len);
+int next_wword(FILE *fp, wchar_t *buff, int len);
 
 typedef enum ith_base_ {
   BINARY,
@@ -84,6 +128,4 @@ double entropy(ith_pmf *, double);
 
 void print_ith_pmf(ith_pmf *, ith_context);
 
-void sort_pmf(ith_pmf *);
-
-#endif /* __LIBITH_PMF_H */
+#endif /* ITH_H */

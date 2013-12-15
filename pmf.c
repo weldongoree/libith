@@ -4,6 +4,105 @@
 #include <string.h>
 #include <stdio.h>
 
+void debug_pmf(ith_pmf *);
+
+size_t lesser_size(ith_symbol *, ith_symbol *);
+void sort_pmf(ith_pmf *);
+void selection_sort(ith_pmf *);
+/* yes, yes, I know... these are generally short enough that it's a better way */
+int compare_symbols(ith_symbol *, ith_symbol *);
+void debug_symbol(ith_symbol *);
+
+void debug_symbol(ith_symbol *sym)
+{
+  if (!(sym->data))
+    {
+      printf("[NULL] ");
+    }
+  else
+    {
+      int *foo = sym->data;
+      printf("[%c] ", *foo); 
+    }
+}
+
+int compare_symbols(ith_symbol *a, ith_symbol *b)
+{
+  size_t sz = lesser_size(a, b);
+  int res = memcmp(a->data, b->data, sz);
+  if (res < 0)
+    {
+      return(1);
+    }
+  else
+    {
+      return(0);
+    }
+}
+
+void selection_sort(ith_pmf *pmf)
+{
+  ith_symbol *start = malloc(sizeof(ith_symbol));
+  start->data = NULL;
+  start->next = pmf->head;
+  pmf->head = start;
+  
+  ith_symbol *last_sorted = start;
+  ith_symbol *search = start->next;
+  ith_symbol *min = search;
+  ith_symbol *min_prev = start;
+
+  while (last_sorted->next)
+    {
+      search = last_sorted->next;
+      min = search;
+      min_prev=last_sorted;
+      while (search->next)
+	{
+	  if (compare_symbols(search->next, min))
+	    {
+	      min = search->next;
+	      min_prev = search;
+	    }
+	  search = search->next;	  
+	}
+      min_prev->next = min->next;
+      min->next = last_sorted->next;
+      last_sorted->next = min;
+      last_sorted=min;
+    }
+  start = pmf->head;
+  pmf->head = pmf->head->next;
+  free(start);
+  return;
+}
+
+size_t lesser_size(ith_symbol *a, ith_symbol *b)
+{
+  if (a->size < b->size)
+    {
+      return a->size;
+    }
+  else
+    {
+      return b->size;
+    }
+}
+
+
+void sort_pmf(ith_pmf *pmf)
+{
+  if (!pmf || !(pmf->head))
+    {
+      return;
+    }
+  else
+    {
+      selection_sort(pmf); 
+    }
+  return;
+}
+
 unsigned long long missing_coverage(ith_pmf *pmf, ith_context ctx)
 {
   unsigned long long missing = 0ULL;
@@ -245,6 +344,7 @@ void calculate_frequencies(ith_pmf *alph)
 }
 void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
 {
+  sort_pmf(pmf);
   int *dataptr;
   int count;
   if (!pmf)
@@ -270,7 +370,7 @@ void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
 	}
       else
 	{
-	  printf("Node: %x\n", *dataptr);
+	  printf("Node: %c\n", *dataptr);
 	}
       printf("Count: %d\n", count);
       printf("Freq: %f\n", search->freq);
@@ -281,3 +381,14 @@ void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
   printf("Sum: %d\n", (int) pmf_sum(pmf));
 }
 
+
+void debug_pmf(ith_pmf *pmf)
+{
+  ith_symbol *search = pmf->head;
+  while(search)
+    {
+      debug_symbol(search);
+      search = search->next;
+    }
+  printf("\n");
+}

@@ -223,7 +223,7 @@ int main(int argc, char **argv)
     }
 
   pmf = load_from_file(fflag, fval, cxt);
-  
+
   calculate_frequencies(pmf);
 
   if (xflag)
