@@ -115,13 +115,13 @@ ith_pmf *load_from_file(int fflag, char *fval, ith_context cxt)
   switch (cxt.alphabet)
     {
     case BYTES:
-      while ((holder = fgetc(fp)) != EOF)
+      while (fread(&holder, sizeof(uint8_t), 1, fp) == 1)
 	{
-	  ith_add_data(alph, &holder, sizeof(char));
+	  ith_add_data(alph, &holder, sizeof(uint8_t));
 	}
       break;
     case BITS:
-      while (fread(&holder, sizeof(uint8_t), 1, fp))
+      while (fread(&holder, sizeof(uint8_t), 1, fp) == 1)
 	{
 	  bbholder = explode_byte((uint8_t) holder);
 	  for (i = 0; i < 8; i++)
@@ -131,23 +131,20 @@ ith_pmf *load_from_file(int fflag, char *fval, ith_context cxt)
 	}
       break;
     case UINT16:
-      while ( ((holderarr[0] = fgetc(fp)) != EOF) && ((holderarr[1] = fgetc(fp)) != EOF))
+      while (fread(&holder16, sizeof(uint16_t), 1, fp) == 1)
 	{
-	  holder16 = (((uint16_t)holderarr[0]) << 8) + holderarr[1];
 	  ith_add_data(alph, &holder16, sizeof(uint16_t));
 	}
       break;
     case UINT32:
-      while ( ((holderarr[0] = fgetc(fp)) != EOF) && ((holderarr[1] = fgetc(fp)) != EOF) && ((holderarr[2] = fgetc(fp)) != EOF) && ((holderarr[3] = fgetc(fp)) != EOF))
+      while (fread(&holder32, sizeof(uint32_t), 1, fp) == 1)
 	{
-	  holder32 = (((uint32_t)holderarr[0]) << 24) + (((uint32_t)holderarr[1]) << 16) + (((uint32_t)holderarr[2]) << 8) + holderarr[3];
 	  ith_add_data(alph, &holder32, sizeof(uint32_t));
 	}
 	break;
     case UINT64:
-      while ( ((holderarr[0] = fgetc(fp)) != EOF) && ((holderarr[1] = fgetc(fp)) != EOF) && ((holderarr[2] = fgetc(fp)) != EOF) && ((holderarr[3] = fgetc(fp)) != EOF) && ((holderarr[4] = fgetc(fp)) != EOF) && ((holderarr[5] = fgetc(fp)) != EOF) && ((holderarr[6] = fgetc(fp)) != EOF) && ((holderarr[7] = fgetc(fp)) != EOF))
+      while (fread(&holder64, sizeof(uint64_t), 1, fp) == 1)
 	{
-	  holder64 = (((uint64_t)holderarr[0]) << 56) + (((uint64_t)holderarr[1]) << 48) + (((uint64_t)holderarr[2]) << 40) + (((uint64_t)holderarr[3]) << 32) + (((uint64_t)holderarr[4]) << 24) + (((uint64_t)holderarr[5]) << 16) + (((uint64_t)holderarr[6]) << 8) +holderarr[7];
 	  ith_add_data(alph, &holder64, sizeof(uint64_t));	
 	}
       break;

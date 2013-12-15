@@ -9,6 +9,6 @@ typedef struct chisquare_result_ {
 
 chisquare_result chisquare(ith_pmf *);
 
-
+chisquare_result chisquarefull(ith_pmf *, ith_context cxt);
 
 #endif

@@ -20,7 +20,9 @@ void usage()
   printf("-e entropy (this is the default if no command is specified)\n");
   printf("-c domain coverage\n");
   printf("-k Killback-Leibler divergence\n");
+  printf("-K Killback-Leibler divergence over entire alphabet\n");
   printf("-x Pearson chi-squared for randomness\n");
+  printf("-X Pearson chi-squared for randomness over entire alphabet\n");
   printf("-p print the resulting PMF\n");
   printf("-A equivalent to -e -c -k -x\n\n");
   printf("OPTIONS are zero or more of:\n");

@@ -8,9 +8,11 @@ ith takes the following commands and options:
 
 Commands:
 -e print the entropy of the input (this is the default if no command switch is given)
--c print the extent to which the possible alphabet domain was not covered by the sample
--k print the Kullback-Leibler divergence of the actual distribution from a uniform distribution over the requested alphabet
+-c print the extent to which the possible alphabet domain was not covered by the sample (only works for numeric alphabets)
+-k print the Kullback-Leibler divergence of the actual distribution from a uniform distribution over the sample's alphabet
+-K like -k, but use the entire possible requested alphabet (see -c)
 -x print the Pearson chi-squared against the null hypothesis of uniform distribution over the requested alphabet
+-X like -x, but use the entire possible requested alphabet (see -c)
 -p display the PMF calculated
 -h usage
 -A equivalent to -e -c -k -x

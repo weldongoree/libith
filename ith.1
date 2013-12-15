@@ -16,12 +16,16 @@ Show coverage of alphabet requested (e.g. what percent of all 255 possible bytes
 Compute entropy (this is the default if no command is specified).
 .IP -k
 Compute Kullback-Leibler divergence against a uniform distribution.
+.IP -K
+Like -k, but use the entire possible alphabet (see -c).
 .IP -p	
 Print the resulting PMF; semantics will vary based on the alphabet chosen below (in particular, 
 .B word
 will display the string parsed as a word; the rest will display numbers or memory locations since wide char streams make terminals futzy).
 .IP -x	
 Run the Pearson chi-squared test against the null hypothesis of uniform distribution over the alphabet.
+.IP -X
+Like -x, but use the entire possible alphabet (see -c).
 .IP -A
 Equivalent to -x -k -e -c.
 

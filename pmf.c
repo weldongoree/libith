@@ -265,8 +265,8 @@ void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
       count = (int) search->count;
       if (cxt.alphabet == WORDS)
 	{
-	  printf("Node: %s\n", dataptr);
-	  printf("Strlen: %d\n", search->size);
+	  printf("Node: %s\n", (char *) dataptr);
+	  printf("Strlen: %d\n", (int) (search->size));
 	}
       else
 	{
@@ -277,7 +277,7 @@ void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
       printf("\n");
       search = search->next;
     }
-  printf("Total length: %llu\n", (int) pmf->length);
+  printf("Total length: %llu\n", pmf->length);
   printf("Sum: %d\n", (int) pmf_sum(pmf));
 }
 
