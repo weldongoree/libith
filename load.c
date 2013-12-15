@@ -121,7 +121,7 @@ ith_pmf *load_from_file(int fflag, char *fval, ith_context cxt)
 	}
       break;
     case BITS:
-      while ((holder = fgetc(fp)) != EOF)
+      while (fread(&holder, sizeof(uint8_t), 1, fp))
 	{
 	  bbholder = explode_byte((uint8_t) holder);
 	  for (i = 0; i < 8; i++)
