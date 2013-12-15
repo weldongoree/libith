@@ -1,6 +1,9 @@
 #include "kldiv.h"
 #include <math.h>
 
+/* TODO: add functions that look at the whole possible alphabet, not just the
+   actual sample */
+
 double kldiv(ith_pmf *pmf, double base)
 {
   double res=0.;

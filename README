@@ -2,7 +2,9 @@ This is a library for computing entropy and other information-theory-related fun
 
 Also, this is absurdly non-optimized as of now; I'm working on making sure it's correct at the expense of higher memory usage and slower i/o.
 
-make will produce a shared library called libith.so.0.0 and a binary called "ith". Its takes the following commands and options:
+make will produce a shared library called libith.so.0.0 and a binary called "ith". make install will move these into /usr/local/bin and /usr/local/lib respectively, as well as create the symlink libith.so. make install understands DESTDIR, PREFIX, BINDIR, and LIBDIR.
+
+ith takes the following commands and options:
 
 Commands:
 -e print the entropy of the input (this is the default if no command switch is given)
@@ -15,7 +17,7 @@ Commands:
 
 Options:
 -a 1 | 8 | 16 | 32 | 64 | char | wchar | word | wword (width of alphabet; consider the file a sequence of bits, bytes, shorts, etc.)
--t be terse; simply print the answer (default prints an English sentence)
+-t be terse; simply print the answer (default prints an English sentence -- I should localize this at some point...)
 -u 2 | 10 | e (compute information in bits, digits, and nats respectively; bits is default)
 -f file (default reads from stdin)
 
