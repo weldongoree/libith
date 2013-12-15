@@ -1,8 +1,10 @@
-This is a library for computing entropy and other information-theory-related functions on data. Currently it will find the entropy, Kullback-Leibler, or chi squared of a file or stdin in bits, nats, or digits over the file's bits, bytes, ints, characters, or alphabetic words.
+This is a library for computing entropy and other information-theory-related functions on data. Currently it will find the entropy, Kullback-Leibler, or chi squared of a file or stdin in bits, nats, or digits over the file's bits, bytes, ints, characters, or alphabetic words. 
 
-Also, this is absurdly non-optimized as of now; I'm working on making sure it's correct at the expense of higher memory usage and slower i/o.
+As of December 2013 it "works" for many values of "works", but it's a ways away from a release.
 
-make will produce a shared library called libith.so.0.0 and a binary called "ith". make install will move these into /usr/local/bin and /usr/local/lib respectively, as well as create the symlink libith.so. make install understands DESTDIR, PREFIX, BINDIR, and LIBDIR.
+Also, it is absurdly non-optimized as of now; I'm working on making sure it's correct at the expense of higher memory usage and slower i/o.
+
+make will produce a shared library called libith.so.0.0 and a binary called "ith". make install will move these into /usr/local/bin and /usr/local/lib respectively, as well as create the symlink libith.so. make install understands DESTDIR, PREFIX, BINDIR, LIBDIR, MANDIR, INCLUDEDIR (though those only matter for the targets man-install and header-install, respectively).
 
 ith takes the following commands and options:
 

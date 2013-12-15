@@ -344,7 +344,6 @@ void calculate_frequencies(ith_pmf *alph)
 }
 void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
 {
-  sort_pmf(pmf);
   int *dataptr;
   int count;
   if (!pmf)
