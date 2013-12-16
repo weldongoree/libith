@@ -106,22 +106,23 @@ void sort_pmf(ith_pmf *pmf)
 unsigned long long missing_coverage(ith_pmf *pmf, ith_context ctx)
 {
   unsigned long long missing = 0ULL;
+  unsigned long long fencepost = pmf->length - 1ULL;
   switch (ctx.alphabet)
     {
     case BITS:
-      missing = ITH_MAX_BIT - pmf->length;
+      missing = ITH_MAX_BIT - fencepost;
       break;
     case BYTES:
-      missing = ITH_MAX_BYTE - pmf->length;
+      missing = ITH_MAX_BYTE - fencepost;
       break;
     case UINT16:
-      missing = ITH_MAX_UINT16 - pmf->length;
+      missing = ITH_MAX_UINT16 - fencepost;
       break;
     case UINT32:
-      missing = ITH_MAX_UINT32 - pmf->length;
+      missing = ITH_MAX_UINT32 - fencepost;
       break;
     case UINT64:
-      missing = ITH_MAX_UINT64 - pmf->length;
+      missing = ITH_MAX_UINT64 - fencepost;
       break;
     default:
       printf("Coverage requires an integer alphabet\n");
@@ -369,7 +370,7 @@ void print_ith_pmf(ith_pmf *pmf, ith_context cxt)
 	}
       else
 	{
-	  printf("Node: %c\n", *dataptr);
+	  printf("Node: %d\n", *dataptr);
 	}
       printf("Count: %d\n", count);
       printf("Freq: %f\n", search->freq);
