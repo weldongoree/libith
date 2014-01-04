@@ -1,6 +1,8 @@
 #ifndef __LIBITH_PMF_ARRAY_H
 #define __LIBITH_PMF_ARRAY_H
 
+#include "pmf.h"
+
 typedef struct ith_pmf_array_ {
   void *vals;
   double *freqs;

@@ -2,13 +2,6 @@
 #include "pmf_array.h"
 #include "wchar.h"
 
-typedef struct ith_pmf_array_ {
-  void *vals;
-  double *freqs;
-  int length;
-  size_t size;
-} ith_pmf_array;
-
 size_t array_unitsize(ith_context cxt);
 
 size_t array_unitsize(ith_context cxt)
@@ -36,7 +29,13 @@ size_t array_unitsize(ith_context cxt)
 
 ith_pmf_array pmf_to_array(ith_pmf *pmf, ith_context cxt)
 {
+  ith_symbol *search;
   ith_pmf_array res;
+  int i = 0;
+  if (!(pmf->calculated))
+    {
+      return NULL;
+    }
   res.size = unit_arraysize(cxt);
   res.length = pmf->length;
   res.vals = calloc(res.length, res.size);
@@ -46,6 +45,36 @@ ith_pmf_array pmf_to_array(ith_pmf *pmf, ith_context cxt)
       free(res.vals);
       free(res.freqs);
     }
+  
+  search = pmf->head;
+  while (search)
+    {
+      switch (cxt.size)
+	{
+	case BITS:
+	case BYTES:
+	case CHARS:
+	  (res.vals)[i] = (uint8_t) *(search->data);
+	  break;
+	case UINT16:
+	  (res.vals)[i] = (uint16_t) *(search->data);
+	  break;
+	case UINT32:
+	  (res.vals)[i] = (uint32_t) *(search->data);
+	  break;
+	case UINT64:
+	  (res.vals)[i] = (uint64_t) *(search->data);
+	  break;
+	case WCHARS:
+	  (res.vals)[i] = (wchar_t) *(search->data);
+	  break;
+	default:
+	  return NULL;
+	}
+      i++;
+      search = search->next;
+    }
+
   return res;
 }
 
